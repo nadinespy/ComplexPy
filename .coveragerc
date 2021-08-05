@@ -1,7 +1,7 @@
 [run]
 branch = True
-source = shablona/*
-include = shablona/*
+source = emergence_complexity_measures_comparison/*
+include = emergence_complexity_measures_comparison/*
 omit = */setup.py
 [report]
-include = shablona/*
+include = emergence_complexity_measures_comparison/*

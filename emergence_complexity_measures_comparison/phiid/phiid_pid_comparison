@@ -1,0 +1,30 @@
+# -*- coding: utf-8 -*-
+"""
+Spyder Editor
+
+This is a temporary script file.
+"""
+
+from oct2py import Oct2Py
+from oct2py import octave
+
+oc = Oct2Py()
+
+
+oc.addpath(oc.genpath('/media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/PhiIDComparison/'))
+oc.addpath('/media/nadinespy/NewVolume/my_stuff/work/toolboxes_matlab/')
+
+
+#javaaddpath('infodynamics.jar');
+
+A2b = oc.load('A2b.mat')
+npoints = 2000;
+
+X = oc.statdata(A2b,npoints);
+tau = 1;
+
+double_red_mmi = oc.DoubleRedundancyMMI(X,tau);
+double_red_ccs = oc.DoubleRedundancyCCS(X,tau);
+
+all_phiid_atoms_mmi = oc.PhiIDFull(X, tau, 'MMI'); #double_red_mmi and all_phiid_atoms.rtr should yield the same value
+all_phiid_atoms_ccs = oc.PhiIDFull(X, tau, 'CCS');

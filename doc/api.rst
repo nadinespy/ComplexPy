@@ -5,7 +5,7 @@ API
 Classes
 -------
 
-.. currentmodule:: shablona
+.. currentmodule:: emergence_complexity_measures_comparison
 
 .. autosummary::
    :template: class.rst
