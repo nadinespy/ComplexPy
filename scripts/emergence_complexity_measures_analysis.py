@@ -20,7 +20,12 @@ import os.path as op
 import matplotlib as plt
 import glob
 import scipy.io as sio
+import joblib
 from importlib import reload # %load_ext autoreload, %autoreload 2 %reset
+
+oc = Oct2Py()
+
+#%% paths
 
 os.chdir('/media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/EmergenceComplexityMeasuresComparison/EmergenceComplexityMeasuresComparison_Python')
 import emergence_complexity_measures_comparison as ecmc 
@@ -29,31 +34,38 @@ analyses_pathout = '//media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/Em
 plots_pathout = '//media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/EmergenceComplexityMeasuresComparison/EmergenceComplexityMeasuresComparison_Python/results/plots/'
 data_pathin = op.join(ecmc.__path__[0], 'data')
 
-#%% if already done: load phiid of networks
+#%% load phiid of 2- and 8-node networks generated in matlab
 
-def load_mat_file(phiid_path):
+def load_phiid_from_mat(phiid_path):
     try:
-        phiid_network = sio.loadmat(phiid_path,squeeze_me=True,struct_as_record=False)['all_atoms_err_coup_mmi'] 
+        phiid = sio.loadmat(phiid_path, squeeze_me=True, struct_as_record=False)['all_atoms_err_coup_mmi'] 
     except:
         pass
    
     try:
-        phiid_network = sio.loadmat(phiid_path,squeeze_me=True,struct_as_record=False)['all_atoms_err_coup_ccs']
+        phiid = sio.loadmat(phiid_path, squeeze_me=True, struct_as_record=False)['all_atoms_err_coup_ccs']
     except:
         pass
     
-    return phiid_network
+    return phiid
     
+# load file, if existent, otherwise load mat files and create pickle file
+try:
+    all_phiids = joblib.load(analyses_pathout+r'phiid_ccs_mmi_2node_8node_all_err_coup1.pkl')
+except:
+    phiid_paths = sorted(glob.glob(analyses_pathout+r'*_all_atoms**1**mat*')) 
+    all_phiids = {}
+    models = ["phiid_ccs_2node_all_err_coup1", "phiid_mmi_2node_all_err_coup1", "phiid_ccs_8node_all_err_coup1", "phiid_mmi_8node_all_err_coup1"]
+    for i in range(len(phiid_paths)):
+        temp_phiid = load_phiid_from_mat(phiid_paths[i])
+        temp_phiid_dict = {'rtr': temp_phiid.rtr, 'rtx': temp_phiid.rtx, 'rty': temp_var.rty, 'rts': temp_phiid.rts, 'xtr': temp_phiid.xtr, 'xtx': temp_phiid.xtx, \
+                 'xty': temp_phiid.xty, 'xts': temp_phiid.xts, 'ytr': temp_phiid.ytr, 'ytx': temp_phiid.ytx, 'yty': temp_phiid.yty, 'yts': temp_phiid.yts, \
+                     'str': temp_phiid.str, 'stx': temp_phiid.stx, 'sty': temp_phiid.sty, 'sts': temp_phiid.sts}
+        all_phiids[models[i]] = temp_phiid_dict
+        
+    joblib.dump(all_phiids, analyses_pathout+r'phiid_ccs_mmi_2node_8node_all_err_coup1.pkl')
 
-phiid_network_paths = sorted(glob.glob(analyses_pathout+r'*_all_atoms**1*')) 
-
-all_networks = [0] * len(phiid_network_paths)
-
-for i in range(len(phiid_network_paths)):
-    all_networks[i] = load_mat_file(phiid_networks_paths[i])
-    
-
-#%% calculate synergistic/emergent capacity, downward causation, causal decoupling
+#%% calculate synergistic/emergent capacity, downward causation, causal decoupling and store everything in nested dictionary
 
 # Syn(X_t;X_t-1) (synergistic capacity of the system) 
 # Un (Vt;Xt'|Xt) (causal decoupling - the top term in the lattice) 
@@ -68,20 +80,47 @@ for i in range(len(phiid_network_paths)):
 # {12} --> {1}{2} + {12} --> {1} + {12} --> {2}
 
 
-for i in range(len(phiid_network_paths)): 
+all_causal_emergencies_dict = {}
+for i, j in zip(all_phiids, range(len(models))): 
     #synergistic capacity
-    synergy_capacity = all_networks[i].str + all_networks[i].stx + all_networks[i].sty + all_networks[i].sts
-    downward_causation = all_networks[i].str + all_networks[i].stx + all_networks[i].sty
-    causal_decoupling = synergy_capacity - downward_causation
+    temp_emergence_capacity = all_phiids[i]["str"] + all_phiids[i]["stx"] + all_phiids[i]["sty"] + all_phiids[i]["sts"]
+    temp_downward_causation = all_phiids[i]["str"] + all_phiids[i]["stx"] + all_phiids[i]["sty"]
+    temp_causal_decoupling = temp_emergence_capacity - temp_downward_causation
 
-    emergence_capacity = {'synergy capacity': synergy_capacity, 'downward_causation': downward_causation, 'causal_decoupling': causal_decoupling}
+    temp_causal_emergence_dict = {'emergence_capacity': temp_emergence_capacity, 'downward_causation': temp_downward_causation, 'causal_decoupling': temp_causal_decoupling}
+    all_causal_emergencies_dict[list(all_phiids.keys())[j]] = temp_causal_emergence_dict
+    
+joblib.dump(all_causal_emergencies_dict, analyses_pathout+r'causal_emergence_ccs_mmi_2node_8node_all_err_coup1.pkl')
 
-    np.save(analyses_pathout+r'emergence_capacity_'+phiid_network_paths[i][-33:-4]+r'.npy', emergence_capacity)
+#%% convert all_causal_emergencies to dataframe to better do plots
 
-
-
-
-
+all_causal_emergencies_dfs = []
+for model in all_causal_emergencies_dict:
+    for measure in all_causal_emergencies_dict[model]:
+        values = all_causal_emergencies_dict[model][measure].flatten() # go from 100x100 to 10000 with first 100 elements being the first row
+        
+        if '2node' in model:
+            coupling_labels = np.linspace(0.045, 0.45, 100)
+            noise_labels = np.linspace(0.01, 0.9, 100)
+            noise_labels_unpacked = np.tile(noise_labels, 100)
+            coupling_labels_unpacked = np.repeat(coupling_labels, 100)
+            
+            temp_df = pd.DataFrame({'noise_corr': noise_labels_unpacked, 'coupling': coupling_labels_unpacked,
+                                    'value': values, 'model': model, 'measure': measure})
+            all_causal_emergencies_dfs.append(temp_df)
+            continue 
+        
+        elif '8node' in model:
+            coupling_labels = ['phi_optimal_binary_network', 'phi_optimal_weighted_network', 'small_world', 'fully_connected', 'bidirectional_ring', 'unidirectional_ring']
+            noise_labels = np.linspace(0.01, 0.9, 6)
+            noise_labels_unpacked = np.tile(noise_labels, 6)
+            coupling_labels_unpacked = np.repeat(coupling_labels, 6)
+            
+            temp_df = pd.DataFrame({'noise_corr': noise_labels_unpacked, 'coupling': coupling_labels_unpacked,
+                                    'value': values, 'model': model, 'measure': measure})
+        
+            all_causal_emergencies_dfs.append(temp_df)
+            continue
 
 
 
@@ -116,13 +155,16 @@ oc.push('y', y)
 
 
 oc.addpath('/media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/EmergenceComplexityMeasuresComparison/EmergenceComplexityMeasuresComparison_Python/emergence_complexity_measures_comparison/practical_measures_causal_emergence')  
-oc.EmergencePsi(rn.randn(100,2), np.random.randn(100,1))
+oc.EmergencePsi(np.random.randn(100,2), np.random.randn(100,1))
 
 oc.addpath('/media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/EmergenceComplexityMeasuresComparison/EmergenceComplexityMeasuresComparison_Python/emergence_complexity_measures_comparison/phiid')  
+oc.javaaddpath('/media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/EmergenceComplexityMeasuresComparison/EmergenceComplexityMeasuresComparison_Python/emergence_complexity_measures_comparison/phiid/infodynamics.jar')
+oc.addpath('/media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/EmergenceComplexityMeasuresComparison/EmergenceComplexityMeasuresComparison_Python/emergence_complexity_measures_comparison/phiid/statistics-1.4.2/inst')
 X = np.random.randint(10, size=(2, 2000))
-blubb = oc.struct2array(PhiIDFull(X, tau, 'MMI')).T
-
 oc.eval('pkg load statistics') 
+blubb = oc.PhiIDFull(X, tau, 'MMI')
+
+
 X = oc.statdata_coup_errors1(A, npoints, tau, err) 
 
 nvar = 2
