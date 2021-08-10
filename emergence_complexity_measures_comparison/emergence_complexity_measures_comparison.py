@@ -5,9 +5,10 @@ import scipy.optimize as opt
 from scipy.special import erf
 from .due import due, Doi
 from oct2py import octave as oc
+import scipy.io as sio
 
 
-#current_path = os.getcwd()
+# current_path = os.getcwd()
 #os.chdir(current_path+'/phiid')
 #oc.addpath(current_path+'practical_measures_causal_emergence')  
 #oc.javaaddpath(current_path+'/phiid'+'infodynamics.jar');
@@ -16,7 +17,8 @@ from oct2py import octave as oc
 
 
 
-__all__ = ["addition", "statdata_coup_errors1", "phiid_full", "Model", "Fit", "opt_err_func", "transform_data", "cumgauss"]
+
+__all__ = ["causal_emergence_phiid", "compute_emergence", "addition", "statdata_coup_errors1", "phiid_full", "Model", "Fit", "opt_err_func", "transform_data", "cumgauss"]
 
 
 # Use duecredit (duecredit.org) to provide a citation to relevant work to
@@ -26,6 +28,53 @@ due.cite(Doi("10.1167/13.9.30"),
          description="Template project for small scientific Python projects",
          tags=["reference-implementation"],
          path='emergence_complexity_measures_comparison')
+
+
+
+def load_phiid_from_mat(phiid_path):
+    try:
+        phiid = sio.loadmat(phiid_path, squeeze_me=True, struct_as_record=False)['all_atoms_err_coup_mmi'] 
+    except  KeyError:
+        phiid = sio.loadmat(phiid_path, squeeze_me=True, struct_as_record=False)['all_atoms_err_coup_ccs']
+
+    return phiid
+
+def compute_emergence(measure, data, tau = None, redundancy_func = None, macro_variable = None, phiid_path = None):
+    emergence = globals()[measure](data, tau = tau, redundancy_func = redundancy_func, macro_variable = macro_variable, phiid_path = phiid_path)
+    return emergence
+    
+
+def causal_emergence_phiid(data, tau = None, redundancy_func = None, macro_variable = None, phiid_path = None):
+    
+    phiid = load_phiid_from_mat(phiid_path)
+    phiid_dict = {'rtr': phiid.rtr, 'rtx': phiid.rtx, 'rty': phiid.rty, 'rts': phiid.rts, 'xtr': phiid.xtr, 'xtx': phiid.xtx, \
+                       'xty': phiid.xty, 'xts': phiid.xts, 'ytr': phiid.ytr, 'ytx': phiid.ytx, 'yty': phiid.yty, 'yts': phiid.yts, \
+                       'str': phiid.str, 'stx': phiid.stx, 'sty': phiid.sty, 'sts': phiid.sts}
+    
+    # -----------------------------------------------------------------------------
+    # calculate synergistic/emergent capacity, downward causation, 
+    # causal decoupling and store everything in nested dictionary
+    # -----------------------------------------------------------------------------
+
+    # Syn(X_t;X_t-1) (synergistic capacity of the system) 
+    # Un (Vt;Xt'|Xt) (causal decoupling - the top term in the lattice) 
+    # Un(Vt;Xt'α|Xt) (downward causation) 
+
+    # synergy (only considering the synergy that the sources have, not the target): 
+        # {12} --> {1}{2} + {12} --> {1} + {12} --> {2} + {12} --> {12} 
+ 
+    # causal decoupling: {12} --> {12}
+
+    # downward causation: 
+    # {12} --> {1}{2} + {12} --> {1} + {12} --> {2}
+    
+    emergence_capacity_phiid = phiid_dict["str"] + phiid_dict["stx"] + phiid_dict["sty"] + phiid_dict["sts"]
+    downward_causation_phiid = phiid_dict["str"] + phiid_dict["stx"] + phiid_dict["sty"]
+    causal_decoupling_phiid = emergence_capacity_phiid - downward_causation_phiid
+
+    causal_emergence_phiid_dict = {'emergence_capacity': emergence_capacity_phiid, 'downward_causation': downward_causation_phiid, 'causal_decoupling': causal_decoupling_phiid}
+    
+    return causal_emergence_phiid_dict
 
 
 def phiid_full(data, tau, redundancy_function):
@@ -44,7 +93,7 @@ def statdata_coup_errors1(coupling_matrix, npoints, tau, err):
     # Is there a way to direct to that folder without taking absolute paths?
     current_path = os.getcwd()
     print('This is the current path: '+current_path)
-    os.chdir(current_path+'/emergence_complexity_measures_comparison/phiid')
+    os.chdir(current_path+'results/analyses/phiid/emergence_complexity_measures_comparison/phiid')
     
     oc.addpath('/media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/EmergenceComplexityMeasuresComparison/EmergenceComplexityMeasuresComparison_Python/emergence_complexity_measures_comparison/phiid')    
     oc.javaaddpath(current_path+'/emergence_complexity_measures_comparison/phiid/infodynamics.jar');
@@ -53,51 +102,7 @@ def statdata_coup_errors1(coupling_matrix, npoints, tau, err):
     sim_data = oc.statdata_coup_errors1(coupling_matrix, npoints, tau, err)
     return sim_data
 
-def addition(a, b):
-    addition = a+b
-    return addition
-
-
-def transform_data(data):
-    """
-    Function that takes experimental data and gives us the
-    dependent/independent variables for analysis.
-
-    Parameters
-    ----------
-    data : Pandas DataFrame or string.
-        If this is a DataFrame, it should have the columns `contrast1` and
-        `answer` from which the dependent and independent variables will be
-        extracted. If this is a string, it should be the full path to a csv
-        file that contains data that can be read into a DataFrame with this
-        specification.
-
-    Returns
-    -------
-    x : array
-        The unique contrast differences.
-    y : array
-        The proportion of '2' answers in each contrast difference
-    n : array
-        The number of trials in each x,y condition
-    """
-    if isinstance(data, str):
-        data = pd.read_csv(data)
-
-    contrast1 = data['contrast1']
-    answers = data['answer']
-
-    x = np.unique(contrast1)
-    y = []
-    n = []
-
-    for c in x:
-        idx = np.where(contrast1 == c)
-        n.append(float(len(idx[0])))
-        answer1 = len(np.where(answers[idx[0]] == 1)[0])
-        y.append(answer1 / n[-1])
-    return x, y, n
-
+# example of how to document a function
 
 def cumgauss(x, mu, sigma):
     """
@@ -143,109 +148,3 @@ def cumgauss(x, mu, sigma):
     return 0.5 * (1 + erf((x - mu) / (np.sqrt(2) * sigma)))
 
 
-def opt_err_func(params, x, y, func):
-    """
-    Error function for fitting a function using non-linear optimization.
-
-    Parameters
-    ----------
-    params : tuple
-        A tuple with the parameters of `func` according to their order of
-        input
-
-    x : float array
-        An independent variable.
-
-    y : float array
-        The dependent variable.
-
-    func : function
-        A function with inputs: `(x, *params)`
-
-    Returns
-    -------
-    float array
-        The marginals of the fit to x/y given the params
-    """
-    return y - func(x, *params)
-
-
-class Model(object):
-    """Class for fitting cumulative Gaussian functions to data"""
-    def __init__(self, func=cumgauss):
-        """ Initialize a model object.
-
-        Parameters
-        ----------
-        data : Pandas DataFrame
-            Data from a subjective contrast judgement experiment
-
-        func : callable, optional
-            A function that relates x and y through a set of parameters.
-            Default: :func:`cumgauss`
-        """
-        self.func = func
-
-    def fit(self, x, y, initial=[0.5, 1]):
-        """
-        Fit a Model to data.
-
-        Parameters
-        ----------
-        x : float or array
-           The independent variable: contrast values presented in the
-           experiment
-        y : float or array
-           The dependent variable
-
-        Returns
-        -------
-        fit : :class:`Fit` instance
-            A :class:`Fit` object that contains the parameters of the model.
-
-        """
-        params, _ = opt.leastsq(opt_err_func, initial,
-                                args=(x, y, self.func))
-        return Fit(self, params)
-
-
-class Fit(object):
-    """
-    Class for representing a fit of a model to data
-    """
-    def __init__(self, model, params):
-        """
-        Initialize a :class:`Fit` object.
-
-        Parameters
-        ----------
-        model : a :class:`Model` instance
-            An object representing the model used
-
-        params : array or list
-            The parameters of the model evaluated for the data
-
-        """
-        self.model = model
-        self.params = params
-
-    def predict(self, x):
-        """
-        Predict values of the dependent variable based on values of the
-        indpendent variable.
-
-        Parameters
-        ----------
-        x : float or array
-            Values of the independent variable. Can be values presented in
-            the experiment. For out-of-sample prediction (e.g. in
-            cross-validation), these can be values
-            that were not presented in the experiment.
-
-        Returns
-        -------
-        y : float or array
-            Predicted values of the dependent variable, corresponding to
-            values of the independent variable.
-        """
-        return self.model.func(x, *self.params)
