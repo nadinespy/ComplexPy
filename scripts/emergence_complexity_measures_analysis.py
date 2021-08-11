@@ -22,7 +22,7 @@ import scipy.io as sio
 import joblib
 from importlib import reload 
 import pandas as pd
-import emergence_complexity_measures_comparison as ecmc 
+
 
 oc = Oct2Py()
 
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     
     # paths
     os.chdir('/media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/EmergenceComplexityMeasuresComparison/EmergenceComplexityMeasuresComparison_Python')
-
+    import emergence_complexity_measures_comparison as ecmc 
 
     analyses_pathout = '//media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/EmergenceComplexityMeasuresComparison/EmergenceComplexityMeasuresComparison_Python/results/analyses/'
     plots_pathout = '//media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/EmergenceComplexityMeasuresComparison/EmergenceComplexityMeasuresComparison_Python/results/plots/'
@@ -104,77 +104,6 @@ for i, j in zip(all_phiids, range(len(models))):
     
 joblib.dump(all_causal_emergencies_dict, analyses_pathout+r'causal_emergence_ccs_mmi_2node_8node_all_err_coup1.pkl')
 
-
-
-#%% load/generate data
-
-#%% load/generate macro variable
-
-#%% calculate emergence measure(s)
-
-# goal: have something like this
-# causal_emergence = compute_emergence(measure, data, tau = tau, redundancy_func = 'mmi', macro_variable = macro_variable)
-# statistical_complexity = compute_complexity(measure, data)
-
-
-data = []
-phiid_path = analyses_pathout+r'phiid/8node_all_atoms_err_coup_mmi1.mat' 
-causal_emergence = ecmc.compute_emergence("causal_emergence_phiid", data, tau = 1, redundancy_func = 'mmi', phiid_path = phiid_path)
-
-
-
-
-
-
-
-
-
-causal_emergence = compute_emergence(measure, redundancy_function, tau, data, macro_variable)
-
-
-def load_phiid_from_mat(phiid_path):
-    try:
-        phiid = sio.loadmat(phiid_path, squeeze_me=True, struct_as_record=False)['all_atoms_err_coup_mmi'] 
-    except  KeyError:
-        phiid = sio.loadmat(phiid_path, squeeze_me=True, struct_as_record=False)['all_atoms_err_coup_ccs']
-
-    return phiid
-
-# load file, if existent, otherwise load mat files and create pickle file
-try:
-    all_phiids = joblib.load(analyses_pathout+r'phiid_ccs_mmi_2node_8node_all_err_coup1.pkl')
-except:
-    phiid_paths = sorted(glob.glob(analyses_pathout+r'*_all_atoms**1**mat*')) 
-    all_phiids = {}
-    models = ["phiid_ccs_2node_all_err_coup1", "phiid_mmi_2node_all_err_coup1", "phiid_ccs_8node_all_err_coup1", "phiid_mmi_8node_all_err_coup1"]
-    for i in range(len(phiid_paths)):
-        temp_phiid = load_phiid_from_mat(phiid_paths[i])
-        temp_phiid_dict = {'rtr': temp_phiid.rtr, 'rtx': temp_phiid.rtx, 'rty': temp_phiid.rty, 'rts': temp_phiid.rts, 'xtr': temp_phiid.xtr, 'xtx': temp_phiid.xtx, \
-                 'xty': temp_phiid.xty, 'xts': temp_phiid.xts, 'ytr': temp_phiid.ytr, 'ytx': temp_phiid.ytx, 'yty': temp_phiid.yty, 'yts': temp_phiid.yts, \
-                     'str': temp_phiid.str, 'stx': temp_phiid.stx, 'sty': temp_phiid.sty, 'sts': temp_phiid.sts}
-        all_phiids[models[i]] = temp_phiid_dict
-        
-    joblib.dump(all_phiids, analyses_pathout+r'phiid_ccs_mmi_2node_8node_all_err_coup1.pkl')
-
-all_causal_emergencies_dict = {}
-models = ["phiid_ccs_2node_all_err_coup1", "phiid_mmi_2node_all_err_coup1", "phiid_ccs_8node_all_err_coup1", "phiid_mmi_8node_all_err_coup1"]
-    
-for i, j in zip(all_phiids, range(len(models))): 
-    #synergistic capacity
-    temp_emergence_capacity = all_phiids[i]["str"] + all_phiids[i]["stx"] + all_phiids[i]["sty"] + all_phiids[i]["sts"]
-    temp_downward_causation = all_phiids[i]["str"] + all_phiids[i]["stx"] + all_phiids[i]["sty"]
-    temp_causal_decoupling = temp_emergence_capacity - temp_downward_causation
-
-    temp_causal_emergence_dict = {'emergence_capacity': temp_emergence_capacity, 'downward_causation': temp_downward_causation, 'causal_decoupling': temp_causal_decoupling}
-    all_causal_emergencies_dict[list(all_phiids.keys())[j]] = temp_causal_emergence_dict
-    
-joblib.dump(all_causal_emergencies_dict, analyses_pathout+r'causal_emergence_ccs_mmi_2node_8node_all_err_coup1.pkl')
-
-
-
-
-
-
 # -----------------------------------------------------------------------------
 # convert all_causal_emergencies to dataframe to better do plots
 # -----------------------------------------------------------------------------
@@ -208,17 +137,63 @@ for model in all_causal_emergencies_dict:
 all_causal_emergencies_dfs = pd.concat(all_causal_emergencies_dfs, ignore_index=True)
 
 
+#%% load/generate data
+
+#%% load/generate macro variable
+
+#%% calculate emergence measure(s)
+
+# goal: have something like this
+# causal_emergence = compute_emergence(measure, data, tau = tau, redundancy_func = 'mmi', macro_variable = macro_variable)
+# statistical_complexity = compute_complexity(measure, data)
 
 
+# workaround: in the final version, data should not be empty, but have the actual time-series, and phiid_path should be eliminiated, as phiid should be calculated in Python as well (as opposed to loaded from files)
+data = []
+
+# order of models contained in phiid_paths should corresponds to order in models
+phiid_paths = sorted(glob.glob(analyses_pathout+r'phiid/*_all_atoms**1**mat*')) 
+models = ["phiid_ccs_2node_all_err_coup1", "phiid_mmi_2node_all_err_coup1", "phiid_ccs_8node_all_err_coup1", "phiid_mmi_8node_all_err_coup1"]
+
+all_causal_emergencies_dfs = []
+for i, j in zip(range(len(phiid_paths)), range(len(models))): 
+    
+    phiid_path = phiid_paths[i]
+    model = models[j]
+    causal_emergence = ecmc.compute_emergence("causal_emergence_phiid", data, tau = 1, redundancy_func = 'mmi', phiid_path = phiid_path)
+    for measure in causal_emergence:
+        values = causal_emergence[measure].flatten()
+
+        if '2node' in phiid_path:
+            coupling_labels = np.linspace(0.045, 0.45, 100)
+            noise_labels = np.linspace(0.01, 0.9, 100)
+            noise_labels_unpacked = np.tile(noise_labels, 100)
+            coupling_labels_unpacked = np.repeat(coupling_labels, 100)
+            
+            temp_df = pd.DataFrame({'noise_corr': noise_labels_unpacked, 'coupling': coupling_labels_unpacked,
+                                    'value': values, 'model': model, 'measure': measure})
+            all_causal_emergencies_dfs.append(temp_df)
+        elif '8node' in phiid_path:
+            coupling_labels = ['phi_optimal_binary_network', 'phi_optimal_weighted_network', 'small_world', 'fully_connected', 'bidirectional_ring', 'unidirectional_ring']
+            noise_labels = np.linspace(0.01, 0.9, 6)
+            noise_labels_unpacked = np.tile(noise_labels, 6)
+            coupling_labels_unpacked = np.repeat(coupling_labels, 6)
+            
+            temp_df = pd.DataFrame({'noise_corr': noise_labels_unpacked, 'coupling': coupling_labels_unpacked,
+                                    'value': values, 'model': model, 'measure': measure})
+
+            all_causal_emergencies_dfs.append(temp_df)
+            
+all_causal_emergencies_dfs = pd.concat(all_causal_emergencies_dfs, ignore_index=True)    
+all_causal_emergencies_dfs.to_pickle(analyses_pathout+r'causal_emergence_ccs_mmi_2node_8node_all_err_coup1.pkl')
 
 
+causal_decoupling_phiid_ccs_2node_all_err_coup1 = all_causal_emergencies_dfs.loc[(all_causal_emergencies_dfs.model =="phiid_ccs_2node_all_err_coup1") & (all_causal_emergencies_dfs['measure'] == "causal_decoupling")][['value', 'coupling', 'noise_corr']]
 
+causal_decoupling_phiid_ccs_2node_all_err_coup1 = pd.pivot_table(all_causal_emergencies_dfs.loc[(all_causal_emergencies_dfs.model =="phiid_ccs_2node_all_err_coup1") & (all_causal_emergencies_dfs['measure'] == "causal_decoupling")], values='value', index=['coupling'], columns='noise_corr')
+sns.heatmap(causal_decoupling_phiid_ccs_2node_all_err_coup1)
 
-
-
-
-
-
+#%%
 
 # HIER ABSOLUTEN PFAD MACHEN <3
 oc.load(['/media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/PhiIDComparison/scripts/A2b.mat'])

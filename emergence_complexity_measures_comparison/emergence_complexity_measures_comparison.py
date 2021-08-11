@@ -18,7 +18,7 @@ import scipy.io as sio
 
 
 
-__all__ = ["causal_emergence_phiid", "compute_emergence", "addition", "statdata_coup_errors1", "phiid_full", "Model", "Fit", "opt_err_func", "transform_data", "cumgauss"]
+__all__ = ["causal_emergence_phiid", "compute_emergence", "statdata_coup_errors1", "phiid_full", "cumgauss"]
 
 
 # Use duecredit (duecredit.org) to provide a citation to relevant work to
@@ -45,7 +45,26 @@ def compute_emergence(measure, data, tau = None, redundancy_func = None, macro_v
     
 
 def causal_emergence_phiid(data, tau = None, redundancy_func = None, macro_variable = None, phiid_path = None):
-    
+    """
+    Parameters
+    ----------
+    data : float
+        DESCRIPTION.
+    tau : integer, optional
+        Time-lag in multivariate autoregressive time-series model. The default is None.
+    redundancy_func : string, optional
+        Redundancy function to do a PhiID. The default is None.
+    macro_variable : float, optional
+        Candidate emergent macro variable. The default is None.
+    phiid_path : string, optional
+        Path to PhiID files. The default is None.
+
+    Returns
+    -------
+    causal_emergence_phiid_dict : dictionary
+        Emergence capacity, downward causation, causal decoupling.
+
+    """
     phiid = load_phiid_from_mat(phiid_path)
     phiid_dict = {'rtr': phiid.rtr, 'rtx': phiid.rtx, 'rty': phiid.rty, 'rts': phiid.rts, 'xtr': phiid.xtr, 'xtx': phiid.xtx, \
                        'xty': phiid.xty, 'xts': phiid.xts, 'ytr': phiid.ytr, 'ytx': phiid.ytx, 'yty': phiid.yty, 'yts': phiid.yts, \
