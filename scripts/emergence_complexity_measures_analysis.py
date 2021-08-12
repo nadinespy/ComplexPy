@@ -16,7 +16,7 @@ import seaborn as sns
 import numpy as np
 import scipy.io
 import os.path as op
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import glob
 import scipy.io as sio
 import joblib
@@ -156,10 +156,8 @@ phiid_paths = sorted(glob.glob(analyses_pathout+r'phiid/*_all_atoms**1**mat*'))
 models = ["phiid_ccs_2node_all_err_coup1", "phiid_mmi_2node_all_err_coup1", "phiid_ccs_8node_all_err_coup1", "phiid_mmi_8node_all_err_coup1"]
 
 all_causal_emergencies_dfs = []
-for i, j in zip(range(len(phiid_paths)), range(len(models))): 
+for phiid_path, model in zip(phiid_paths, models): 
     
-    phiid_path = phiid_paths[i]
-    model = models[j]
     causal_emergence = ecmc.compute_emergence("causal_emergence_phiid", data, tau = 1, redundancy_func = 'mmi', phiid_path = phiid_path)
     for measure in causal_emergence:
         values = causal_emergence[measure].flatten()
@@ -185,13 +183,66 @@ for i, j in zip(range(len(phiid_paths)), range(len(models))):
             all_causal_emergencies_dfs.append(temp_df)
             
 all_causal_emergencies_dfs = pd.concat(all_causal_emergencies_dfs, ignore_index=True)    
+
 all_causal_emergencies_dfs.to_pickle(analyses_pathout+r'causal_emergence_ccs_mmi_2node_8node_all_err_coup1.pkl')
 
 
-causal_decoupling_phiid_ccs_2node_all_err_coup1 = all_causal_emergencies_dfs.loc[(all_causal_emergencies_dfs.model =="phiid_ccs_2node_all_err_coup1") & (all_causal_emergencies_dfs['measure'] == "causal_decoupling")][['value', 'coupling', 'noise_corr']]
+causal_decoupling_phiid_ccs_2node_all_err_coup1 = all_causal_emergencies_dfs.loc[(all_causal_emergencies_dfs.model =="phiid_ccs_8node_all_err_coup1") & (all_causal_emergencies_dfs['measure'] == "causal_decoupling")][['value', 'coupling', 'noise_corr']]
 
-causal_decoupling_phiid_ccs_2node_all_err_coup1 = pd.pivot_table(all_causal_emergencies_dfs.loc[(all_causal_emergencies_dfs.model =="phiid_ccs_2node_all_err_coup1") & (all_causal_emergencies_dfs['measure'] == "causal_decoupling")], values='value', index=['coupling'], columns='noise_corr')
-sns.heatmap(causal_decoupling_phiid_ccs_2node_all_err_coup1)
+blubb = pd.pivot_table(causal_decoupling_phiid_ccs_2node_all_err_coup1, values='value', index=['coupling'], columns='noise_corr', sort = False)
+#%% plotting
+
+measures = ["emergence_capacity", "downward_causation", "causal_decoupling"]
+y_ticklabels_8node = ['optimal_A', 'optimal_B', 'small_world', 'fully_connected', 'ring', 'uni_ring']
+for model in models:
+    for measure in measures:
+        causal_decoupling_phiid_ccs_2node_all_err_coup1 = pd.pivot_table(all_causal_emergencies_dfs.loc[(all_causal_emergencies_dfs.model == model) & (all_causal_emergencies_dfs['measure'] == measure)], values='value', index=['coupling'], columns='noise_corr', sort  = False) 
+        
+        if '2node' in model:
+            num_ticks = 10
+            yticks = np.linspace(0, len(causal_decoupling_phiid_ccs_2node_all_err_coup1) - 1, num_ticks, dtype = int)
+            xticks = np.linspace(0, len(causal_decoupling_phiid_ccs_2node_all_err_coup1) - 1, num_ticks, dtype = int)
+            xticklabels = ["{:.2f}".format(causal_decoupling_phiid_ccs_2node_all_err_coup1.columns[idx]) for idx in xticks]
+            yticklabels = ["{:.2f}".format(causal_decoupling_phiid_ccs_2node_all_err_coup1.index[idx]) for idx in yticks]
+        elif '8node' in model:
+            num_ticks = 6
+            yticks = np.linspace(0, len(causal_decoupling_phiid_ccs_2node_all_err_coup1) - 1, num_ticks, dtype = int)
+            xticks = np.linspace(0, len(causal_decoupling_phiid_ccs_2node_all_err_coup1) - 1, num_ticks, dtype = int)
+            xticklabels = causal_decoupling_phiid_ccs_2node_all_err_coup1.columns
+            yticklabels = y_ticklabels_8node
+    
+        #fig, ax = plt.figure(figsize=(1, 1))
+    
+        plt.rcParams['xtick.labelsize'] = 8
+        plt.rcParams['ytick.labelsize'] = 8
+        plt.rcParams['axes.titlesize'] = 8
+        plt.rcParams['axes.labelsize'] = 8
+
+        ax = sns.heatmap(causal_decoupling_phiid_ccs_2node_all_err_coup1, cbar_kws={'label': measure}, cmap = "coolwarm") # cmap = "YlGnBu"
+        ax.set_yticks(yticks)
+        ax.set_yticklabels(yticklabels)
+        ax.set_xticks(xticks)
+        ax.set_xticklabels(xticklabels, rotation = 0)
+
+# cbar = ax.collections[0].colorbar
+# here set the labelsize by 20
+# cbar.ax.tick_params(labelsize=8)
+        ax.set_title(measure + ' in ' + model)
+        plt.show()
+        
+        fig = ax.get_figure()
+        fig.savefig(plots_pathout + measure + '_' + model + '.png', dpi = 300, bbox_inches="tight")  
+    
+        del fig
+
+
+    
+    
+
+
+
+
+
 
 #%%
 

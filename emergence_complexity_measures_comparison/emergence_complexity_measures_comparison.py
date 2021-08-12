@@ -33,9 +33,9 @@ due.cite(Doi("10.1167/13.9.30"),
 
 def load_phiid_from_mat(phiid_path):
     try:
-        phiid = sio.loadmat(phiid_path, squeeze_me=True, struct_as_record=False)['all_atoms_err_coup_mmi'] 
+        phiid = sio.loadmat(phiid_path, squeeze_me = True, struct_as_record=False)['all_atoms_err_coup_mmi'] 
     except  KeyError:
-        phiid = sio.loadmat(phiid_path, squeeze_me=True, struct_as_record=False)['all_atoms_err_coup_ccs']
+        phiid = sio.loadmat(phiid_path, squeeze_me = True, struct_as_record=False)['all_atoms_err_coup_ccs']
 
     return phiid
 
