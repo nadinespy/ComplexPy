@@ -59,7 +59,8 @@ def causal_emergence_phiid(data, tau = None, redundancy_func = None, macro_varia
     phiid_path : string, optional
         Path to PhiID files. The default is None.
 
-    Returns
+    ReturnsThis script loads phiid files generated in matlab, calculates emergence capacity without using ecmc.compute_emergence() and saves
+everything in a pandas dataframe.
     -------
     causal_emergence_phiid_dict : dictionary
         Emergence capacity, downward causation, causal decoupling.

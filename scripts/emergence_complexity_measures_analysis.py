@@ -189,7 +189,6 @@ all_causal_emergencies_dfs.to_pickle(analyses_pathout+r'causal_emergence_ccs_mmi
 
 causal_decoupling_phiid_ccs_2node_all_err_coup1 = all_causal_emergencies_dfs.loc[(all_causal_emergencies_dfs.model =="phiid_ccs_8node_all_err_coup1") & (all_causal_emergencies_dfs['measure'] == "causal_decoupling")][['value', 'coupling', 'noise_corr']]
 
-blubb = pd.pivot_table(causal_decoupling_phiid_ccs_2node_all_err_coup1, values='value', index=['coupling'], columns='noise_corr', sort = False)
 #%% plotting
 
 measures = ["emergence_capacity", "downward_causation", "causal_decoupling"]
@@ -237,7 +236,9 @@ for model in models:
 
 
     
-    
+sns.heatmap(data=all_causal_emergencies_dfs, x='noise', col='coupling', y='value') 
+
+sns.catplot(data=dfs, x='model', col='measure', y='value')
 
 
 
