@@ -43,7 +43,7 @@ R(R==0)=err;
 % only necessary for non-standard normal distributions, otherwise R = cov_matrix
 standard_dev = ones(1, nvar);							   % vector of standard deviations of the errors
 cov_err = diag(standard_dev)*R*diag(standard_dev);	 % diag() converts std vector to matrix where the diagonal entries are the stds, and all other entries 0
-rng(1);
+%rng(1);
 E = mvnrnd(mu,cov_err,npoints)';						% simulate correlated errors
 
 corr_errors = corrcoef(E(1,:), E(2,:));					   % check correlation

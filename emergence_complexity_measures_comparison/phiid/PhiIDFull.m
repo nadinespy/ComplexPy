@@ -33,6 +33,8 @@ function [ A, L ] = PhiIDFull(varargin)
 %
 % Pedro Mediano and Andrea Luppi, Jan 2021
 
+clear java;
+
 % Find JIDT and add relevant paths; calculate average PhiID atoms
 p = strrep(mfilename('fullpath'), 'PhiIDFull', '');
 if exist([p, '../elph_base'], 'dir')

@@ -18,7 +18,7 @@ import scipy.io as sio
 
 
 
-__all__ = ["causal_emergence_phiid", "compute_emergence", "statdata_coup_errors1", "phiid_full", "cumgauss"]
+__all__ = ["causal_emergence_phiid", "compute_emergence", "mvar_sim_data", "phiid_full", "cumgauss"]
 
 
 # Use duecredit (duecredit.org) to provide a citation to relevant work to
@@ -31,20 +31,23 @@ due.cite(Doi("10.1167/13.9.30"),
 
 
 
-def load_phiid_from_mat(phiid_path):
-    try:
-        phiid = sio.loadmat(phiid_path, squeeze_me = True, struct_as_record=False)['all_atoms_err_coup_mmi'] 
-    except  KeyError:
-        phiid = sio.loadmat(phiid_path, squeeze_me = True, struct_as_record=False)['all_atoms_err_coup_ccs']
+# def load_phiid_from_mat(phiid_path):
+#     try:
+#         phiid = sio.loadmat(phiid_path, squeeze_me = True, struct_as_record=False)['all_atoms_err_coup_mmi'] 
+#     except  KeyError:
+#         phiid = sio.loadmat(phiid_path, squeeze_me = True, struct_as_record=False)['all_atoms_err_coup_ccs']
 
-    return phiid
+#     return phiid
 
-def compute_emergence(measure, data, tau = None, redundancy_func = None, macro_variable = None, phiid_path = None):
-    emergence = globals()[measure](data, tau = tau, redundancy_func = redundancy_func, macro_variable = macro_variable, phiid_path = phiid_path)
-    return emergence
+# def compute_emergence(measure, data, tau = None, redundancy_func = None, macro_variable = None, phiid_path = None):
+#     emergence = globals()[measure](data, tau = tau, redundancy_func = redundancy_func, macro_variable = macro_variable, phiid_path = phiid_path)
+#     return emergence
     
+def compute_emergence(measure, data, time_lag = 1, redundancy_func = 'mmi', macro_variable = None):
+     emergence = globals()[measure](data, time_lag = time_lag, redundancy_func = redundancy_func, macro_variable = macro_variable)
+     return emergence
 
-def causal_emergence_phiid(data, tau = None, redundancy_func = None, macro_variable = None, phiid_path = None):
+def causal_emergence_phiid(data, time_lag = 1, redundancy_func = 'mmi', macro_variable = None):
     """
     Parameters
     ----------
@@ -66,10 +69,12 @@ everything in a pandas dataframe.
         Emergence capacity, downward causation, causal decoupling.
 
     """
-    phiid = load_phiid_from_mat(phiid_path)
-    phiid_dict = {'rtr': phiid.rtr, 'rtx': phiid.rtx, 'rty': phiid.rty, 'rts': phiid.rts, 'xtr': phiid.xtr, 'xtx': phiid.xtx, \
-                       'xty': phiid.xty, 'xts': phiid.xts, 'ytr': phiid.ytr, 'ytx': phiid.ytx, 'yty': phiid.yty, 'yts': phiid.yts, \
-                       'str': phiid.str, 'stx': phiid.stx, 'sty': phiid.sty, 'sts': phiid.sts}
+    
+    if np.isnan(data).any() != True:
+        phiid = phiid_full(data, time_lag = 1, redundancy_func = 'mmi')
+        phiid_dict = {'rtr': phiid.rtr, 'rtx': phiid.rtx, 'rty': phiid.rty, 'rts': phiid.rts, 'xtr': phiid.xtr, 'xtx': phiid.xtx, \
+                        'xty': phiid.xty, 'xts': phiid.xts, 'ytr': phiid.ytr, 'ytx': phiid.ytx, 'yty': phiid.yty, 'yts': phiid.yts, \
+                        'str': phiid.str, 'stx': phiid.stx, 'sty': phiid.sty, 'sts': phiid.sts}
     
     # -----------------------------------------------------------------------------
     # calculate synergistic/emergent capacity, downward causation, 
@@ -88,39 +93,86 @@ everything in a pandas dataframe.
     # downward causation: 
     # {12} --> {1}{2} + {12} --> {1} + {12} --> {2}
     
-    emergence_capacity_phiid = phiid_dict["str"] + phiid_dict["stx"] + phiid_dict["sty"] + phiid_dict["sts"]
-    downward_causation_phiid = phiid_dict["str"] + phiid_dict["stx"] + phiid_dict["sty"]
-    causal_decoupling_phiid = emergence_capacity_phiid - downward_causation_phiid
+        emergence_capacity_phiid = phiid_dict["str"] + phiid_dict["stx"] + phiid_dict["sty"] + phiid_dict["sts"]
+        downward_causation_phiid = phiid_dict["str"] + phiid_dict["stx"] + phiid_dict["sty"]
+        causal_decoupling_phiid = emergence_capacity_phiid - downward_causation_phiid
 
-    causal_emergence_phiid_dict = {'emergence_capacity': emergence_capacity_phiid, 'downward_causation': downward_causation_phiid, 'causal_decoupling': causal_decoupling_phiid}
+        causal_emergence_phiid_dict = {'phiid_emergence_capacity': emergence_capacity_phiid, 'phiid_downward_causation': downward_causation_phiid, 'phiid_causal_decoupling': causal_decoupling_phiid}
     
-    return causal_emergence_phiid_dict
+        return causal_emergence_phiid_dict
+    
+    else: 
+        emergence_capacity_phiid = float('NaN')
+        downward_causation_phiid = float('NaN')
+        causal_decoupling_phiid = float('NaN')
 
+        causal_emergence_phiid_dict = {'phiid_emergence_capacity': emergence_capacity_phiid, 'phiid_downward_causation': downward_causation_phiid, 'phiid_causal_decoupling': causal_decoupling_phiid}
+    
+        return causal_emergence_phiid_dict
 
-def phiid_full(data, tau, redundancy_function):
-    current_path = os.getcwd()
-    print(current_path)
-    os.chdir(current_path+'/emergence_complexity_measures_comparison/phiid')
-    oc.addpath(current_path+'/emergence_complexity_measures_comparison/practical_measures_causal_emergence')  
-    oc.javaaddpath(current_path+'/phiid/emergence_complexity_measures_comparison/infodynamics.jar');
-    #oc.eval('pkg load statistics') 
-    
-    phiid = oc.PhiIDFull(data, tau, redundancy_function)
-    return phiid
+def causal_emergence_practical(data, macro_variable = None):
+    """
+    Parameters
+    ----------
+    data : float
+        DESCRIPTION.
+    tau : integer, optional
+        Time-lag in multivariate autoregressive time-series model. The default is None.
+    redundancy_func : string, optional
+        Redundancy function to do a PhiID. The default is None.
+    macro_variable : float, optional
+        Candidate emergent macro variable. The default is None.
+    phiid_path : string, optional
+        Path to PhiID files. The default is None.
 
-def statdata_coup_errors1(coupling_matrix, npoints, tau, err):
+    ReturnsThis script loads phiid files generated in matlab, calculates emergence capacity without using ecmc.compute_emergence() and saves
+everything in a pandas dataframe.
+    -------
+    causal_emergence_phiid_dict : dictionary
+        Emergence capacity, downward causation, causal decoupling.
+
+    """
+    #........ to be filled
+    return None
     
-    # Is there a way to direct to that folder without taking absolute paths?
-    current_path = os.getcwd()
-    print('This is the current path: '+current_path)
-    os.chdir(current_path+'results/analyses/phiid/emergence_complexity_measures_comparison/phiid')
+def phiid_full(data, time_lag = 1, redundancy_func = 'mmi'):
     
-    oc.addpath('/media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/EmergenceComplexityMeasuresComparison/EmergenceComplexityMeasuresComparison_Python/emergence_complexity_measures_comparison/phiid')    
-    oc.javaaddpath(current_path+'/emergence_complexity_measures_comparison/phiid/infodynamics.jar');
-    oc.eval('pkg load statistics') 
+    if np.isnan(data).any() !=  True:
+        current_path = os.getcwd()
+        #print(current_path)
+        oc.chdir(current_path+'/emergence_complexity_measures_comparison/phiid')
+        oc.addpath(current_path+'/emergence_complexity_measures_comparison/practical_measures_causal_emergence')  
+        oc.javaaddpath(current_path+'/emergence_complexity_measures_comparison/phiid/infodynamics.jar')
+        oc.eval('pkg load statistics') 
+        
+        phiid = oc.PhiIDFull(data, time_lag, redundancy_func)
+        os.chdir(current_path)
+        
+        return phiid
+        
+    else: 
+        return float('NaN')
     
-    sim_data = oc.statdata_coup_errors1(coupling_matrix, npoints, tau, err)
-    return sim_data
+
+def mvar_sim_data(coupling_matrix, npoints = 2000, time_lag = 1, err = 0.1):
+    
+    if np.isnan(coupling_matrix).any() != True:
+        # Is there a way to direct to that folder without taking absolute paths?
+        current_path = os.getcwd()
+        #print('This is the current path: '+current_path)
+        os.chdir(current_path+'/emergence_complexity_measures_comparison/phiid')
+    
+        oc.addpath('/media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/EmergenceComplexityMeasuresComparison/EmergenceComplexityMeasuresComparison_Python/emergence_complexity_measures_comparison/phiid')    
+        oc.javaaddpath(current_path+'/emergence_complexity_measures_comparison/phiid/infodynamics.jar');
+        oc.eval('pkg load statistics') 
+    
+        sim_data = oc.statdata_coup_errors1(coupling_matrix, npoints, time_lag, err)
+        os.chdir(current_path)
+        
+        return sim_data
+    
+    else: 
+        return float('NaN')
 
 # example of how to document a function
 
