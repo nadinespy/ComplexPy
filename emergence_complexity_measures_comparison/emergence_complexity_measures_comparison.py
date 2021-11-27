@@ -1,54 +1,31 @@
 import os
 import numpy as np
-import pandas as pd
-import scipy.optimize as opt
-from scipy.special import erf
-from .due import due, Doi
-from oct2py import octave as oc
-import scipy.io as sio
+#from .due import due, Doi
+from oct2py import octave as oc 
 
 
-# current_path = os.getcwd()
-#os.chdir(current_path+'/phiid')
-#oc.addpath(current_path+'practical_measures_causal_emergence')  
-#oc.javaaddpath(current_path+'/phiid'+'infodynamics.jar');
-#oc.eval('pkg load statistics')  
-
-
-
-
-
-__all__ = ["causal_emergence_phiid", "compute_emergence", "mvar_sim_data", "phiid_full", "cumgauss"]
+#__all__ = ["causal_emergence_phiid", "causal_emergence_practical", "mvar_sim_data", "phiid_full", "cumgauss"] # "compute_emergence", 
 
 
 # Use duecredit (duecredit.org) to provide a citation to relevant work to
 # be cited. This does nothing, unless the user has duecredit installed,
 # And calls this with duecredit (as in `python -m duecredit script.py`):
-due.cite(Doi("10.1167/13.9.30"),
-         description="Template project for small scientific Python projects",
-         tags=["reference-implementation"],
-         path='emergence_complexity_measures_comparison')
+# due.cite(Doi("10.1167/13.9.30"),
+#          description="Template project for small scientific Python projects",
+#          tags=["reference-implementation"],
+#          path='emergence_complexity_measures_comparison')
 
-
-
-# def load_phiid_from_mat(phiid_path):
-#     try:
-#         phiid = sio.loadmat(phiid_path, squeeze_me = True, struct_as_record=False)['all_atoms_err_coup_mmi'] 
-#     except  KeyError:
-#         phiid = sio.loadmat(phiid_path, squeeze_me = True, struct_as_record=False)['all_atoms_err_coup_ccs']
-
-#     return phiid
-
-# def compute_emergence(measure, data, tau = None, redundancy_func = None, macro_variable = None, phiid_path = None):
-#     emergence = globals()[measure](data, tau = tau, redundancy_func = redundancy_func, macro_variable = macro_variable, phiid_path = phiid_path)
+# alternative FIXME: replace named keyword arguments with **kwargs
+#def compute_emergence(measure, data, time_lag = 1, redundancy_func = 'mmi', macro_variable = None):
+#     emergence = globals()[measure](data, time_lag = time_lag, redundancy_func = redundancy_func, macro_variable = macro_variable)
 #     return emergence
-    
-def compute_emergence(measure, data, time_lag = 1, redundancy_func = 'mmi', macro_variable = None):
-     emergence = globals()[measure](data, time_lag = time_lag, redundancy_func = redundancy_func, macro_variable = macro_variable)
-     return emergence
 
+
+# TODO: short summary on top of docstring of function purpose
 def causal_emergence_phiid(data, time_lag = 1, redundancy_func = 'mmi', macro_variable = None):
     """
+    
+    
     Parameters
     ----------
     data : float
@@ -62,11 +39,14 @@ def causal_emergence_phiid(data, time_lag = 1, redundancy_func = 'mmi', macro_va
     phiid_path : string, optional
         Path to PhiID files. The default is None.
 
-    ReturnsThis script loads phiid files generated in matlab, calculates emergence capacity without using ecmc.compute_emergence() and saves
-everything in a pandas dataframe.
+    Returns
     -------
     causal_emergence_phiid_dict : dictionary
         Emergence capacity, downward causation, causal decoupling.
+        
+    Notes
+    -----
+    ...
 
     """
     
@@ -112,6 +92,7 @@ everything in a pandas dataframe.
 
 def causal_emergence_practical(data, macro_variable = None):
     """
+    
     Parameters
     ----------
     data : float
@@ -119,17 +100,20 @@ def causal_emergence_practical(data, macro_variable = None):
     tau : integer, optional
         Time-lag in multivariate autoregressive time-series model. The default is None.
     redundancy_func : string, optional
-        Redundancy function to do a PhiID. The default is None.
+        Redundancy function to do a PhiID. The
     macro_variable : float, optional
         Candidate emergent macro variable. The default is None.
     phiid_path : string, optional
         Path to PhiID files. The default is None.
 
-    ReturnsThis script loads phiid files generated in matlab, calculates emergence capacity without using ecmc.compute_emergence() and saves
-everything in a pandas dataframe.
+    Returns
     -------
-    causal_emergence_phiid_dict : dictionary
+    causal_emergence_practical_dict : dictionary
         Emergence capacity, downward causation, causal decoupling.
+    
+    Notes
+    -----
+    ...
 
     """
     #........ to be filled
@@ -173,50 +157,5 @@ def mvar_sim_data(coupling_matrix, npoints = 2000, time_lag = 1, err = 0.1):
     
     else: 
         return float('NaN')
-
-# example of how to document a function
-
-def cumgauss(x, mu, sigma):
-    """
-    The cumulative Gaussian at x, for the distribution with mean mu and
-    standard deviation sigma.
-
-    Parameters
-    ----------
-    x : float or array
-       The values of x over which to evaluate the cumulative Gaussian function
-
-    mu : float
-       The mean parameter. Determines the x value at which the y value is 0.5
-
-    sigma : float
-       The variance parameter. Determines the slope of the curve at the point
-       of Deflection
-
-    Returns
-    -------
-
-    g : float or array
-        The cumulative gaussian with mean $\\mu$ and variance $\\sigma$
-        evaluated at all points in `x`.
-
-    Notes
-    -----
-    Based on:
-    http://en.wikipedia.org/wiki/Normal_distribution#Cumulative_distribution_function
-
-    The cumulative Gaussian function is defined as:
-
-    .. math::
-
-        \\Phi(x) = \\frac{1}{2} [1 + erf(\\frac{x}{\\sqrt{2}})]
-
-    Where, $erf$, the error function is defined as:
-
-    .. math::
-
-        erf(x) = \\frac{1}{\\sqrt{\\pi}} \\int_{-x}^{x} e^{t^2} dt
-    """
-    return 0.5 * (1 + erf((x - mu) / (np.sqrt(2) * sigma)))
 
 
