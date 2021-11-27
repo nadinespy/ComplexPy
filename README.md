@@ -1,6 +1,6 @@
 ## emergence_complexity_measures_comparison
 
-# Emergence & Complexity Toolbox
+# ComplexPy - a Toolbox for Measures of Emergence & Complexity
 
 This is the repository for a Python library that allows to call and apply several measures of emergence and complexity to either empirical or simulated time-series data, and provide guidance for comparisons among and conclusions about different measures. 
 
