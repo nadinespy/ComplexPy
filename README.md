@@ -162,20 +162,24 @@ and upload the documentation to their website. To use this service, you will nee
 
 A `emergence_complexity_measures_comparison/version.py` contains all of the information needed for the installation and for setting up the [PyPI page](https://pypi.python.org/pypi/emergence_complexity_measures_comparison) for the software. This also makes it possible to install your software with using `pip` and `easy_install`, which are package managers for Python software. The `setup.py` file reads this information from there and passes it to the `setup` function which takes care of the rest.
 
+
 ### Licensing
 
 This code uses the MIT license. More info can be found in the `LICENSE` file. 
+
 
 ### Getting cited
 
 This library uses [duecredit](http://www.duecredit.org). This is a software library that allows you to annotate the code with the correct way to cite it.
 To enable `duecredit`, a file `due.py` is added into the main directory.
 
+
 ### Scripts
 
 A scripts directory is used as a place to experiment with the module code, and as a place to produce scripts that contain a
 narrative structure, demonstrating the use of the code, or producing scientific results from the code and the data and telling a story
 with these elements.
+
 
 ### Git Configuration
 
