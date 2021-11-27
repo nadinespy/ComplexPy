@@ -31,7 +31,7 @@ Once I have succeeded in releasing a mini-version of the library, I welcome cont
 
 ### Organization of this repository
 
-This repository is inspired by [Shablona](https://github.com/uwescience/shablona), which is a template project for small scientific python projects. It follows the standards and conventions of much of the scientific Python eco-system, making reuse of the code for and collaboration with others easier 
+This repository is adapted from [Shablona](https://github.com/uwescience/shablona), which is a template project for small scientific python projects. It follows the standards and conventions of much of the scientific Python eco-system, making reuse of the code for and collaboration with others easier 
 
 This repository has the following structure:
 
