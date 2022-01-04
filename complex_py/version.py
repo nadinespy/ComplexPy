@@ -26,13 +26,13 @@ CLASSIFIERS = ["Development Status :: 3 - Alpha",
                "Topic :: Scientific/Engineering"]
 
 # Description should be a one-liner:
-description = "emergence_complexity_measures_comparison: ..."
+description = "complex_py: ..."
 # Long description will go up on the pypi page
 long_description = """
 
-emergence_complexity_measures_comparison
+complex_py
 ========
-emergence_complexity_measures_comparison is a template project for small scientific Python projects.
+complex_py is a template project for small scientific Python projects.
 
 It contains software implementations of an analysis of some simple data, but
 more importantly, it contains infrastructure for testing, documentation,
@@ -42,11 +42,11 @@ to use in other projects.
 To get started using these components in your own software, please go to the
 repository README_.
 
-.. _README: https://github.com/nadinespy/emergence_complexity_measures_comparison_Python/README.md
+.. _README: https://github.com/nadinespy/complex_py_Python/README.md
 
 License
 =======
-``emergence_complexity_measures_comparison`` is licensed under the terms of the MIT license. See the file
+``complex_py`` is licensed under the terms of the MIT license. See the file
 "LICENSE" for information on the history of this software, terms & conditions
 for usage, and a DISCLAIMER OF ALL WARRANTIES.
 
@@ -55,12 +55,12 @@ All trademarks referenced herein are property of their respective holders.
 Copyright (c) 2015--, Nadine Spychala, University of Sussex.
 """
 
-NAME = "emergence_complexity_measures_comparison"
+NAME = "complex_py"
 MAINTAINER = "Nadine Spychala"
 MAINTAINER_EMAIL = "nadine.spychala@gmail.com"
 DESCRIPTION = description
 LONG_DESCRIPTION = long_description
-URL = "https://github.com/nadinespy/emergence_complexity_measures_comparison_Python"
+URL = "https://github.com/nadinespy/complex_py_Python"
 DOWNLOAD_URL = ""
 LICENSE = "MIT"
 AUTHOR = "Nadine Spychala"
@@ -70,6 +70,6 @@ MAJOR = _version_major
 MINOR = _version_minor
 MICRO = _version_micro
 VERSION = __version__
-PACKAGE_DATA = {'emergence_complexity_measures_comparison': [pjoin('data', '*')]}
+PACKAGE_DATA = {'complex_py': [pjoin('data', '*')]}
 REQUIRES = ["numpy"]
 PYTHON_REQUIRES = ">= 3.5"

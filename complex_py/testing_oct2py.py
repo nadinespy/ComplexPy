@@ -11,7 +11,7 @@ from oct2py import Oct2Py
 oc = Oct2Py()
 
 os.chdir('/media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/EmergenceComplexityMeasuresComparison/EmergenceComplexityMeasuresComparison_Python')
-import emergence_complexity_measures_comparison as ecmc
+import complex_py as ecmc
 
 redundancy_function = 'mmi'
 tau = 1
@@ -21,9 +21,9 @@ phiid = ecmc.phiid_full(data, tau, redundancy_function)
 
 
 current_path = os.getcwd()
-oc.chdir(current_path+'/emergence_complexity_measures_comparison/phiid')
-oc.addpath(current_path+'/emergence_complexity_measures_comparison/practical_measures_causal_emergence')  
-oc.javaaddpath(current_path+'/emergence_complexity_measures_comparison/phiid/infodynamics.jar')
+oc.chdir(current_path+'/complex_py/phiid')
+oc.addpath(current_path+'/complex_py/practical_measures_causal_emergence')  
+oc.javaaddpath(current_path+'/complex_py/phiid/infodynamics.jar')
 oc.eval('pkg load statistics') 
     
 phiid = oc.PhiIDFull(data, tau, redundancy_function)
