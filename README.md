@@ -1,10 +1,10 @@
-## emergence_complexity_measures_comparison
+## complex_py
 
-# ComplexPy - a Toolbox for Measures of Emergence & Complexity
+# ComplexPy - a Library for Measures of Emergence & Complexity
 
-This is the repository for a Python library that allows to call and apply several measures of emergence and complexity to either empirical or simulated time-series data, and provide guidance for comparisons among and conclusions about different measures. 
+This is the repository for a Python library that is supposed to call and apply several measures of emergence and complexity to either empirical or simulated time-series data, and provide guidance for comparisons among and conclusions about different measures. 
 
-I work with yet unpublished software which is why I currently can't work publicly on this library. This will hopefully change in the near future.
+It has long been private due to unsettled publications statuses of software used, and has been made public only very recently. For that reason, preparations to make it ready for contributions from others lay dormant. This will change soon, and all necessary info (e. g., contributor's guide) will be included, and further work on the code base that is necessary to have a minimally working library will follow.
 
 # General idea
 
@@ -27,7 +27,7 @@ This library will be useful for anyone interested in micro-macro relationships u
 Once I have succeeded in releasing a mini-version of the library, I welcome contributions especially from people with software engineering/coding skills, and/or knowledge in information theory & complex systems, and/or a general interest in mathematical/formal micro-macro relationships, and/or a combination of the things just mentioned. Generally, contributions from anyone at any career stage and with any amount of coding experience will be welcome. Both contribution guidelines and Contributor Code of Conduct will be provided once a first release is achieved. 
 
 
-[![Build Status](https://travis-ci.org/uwescience/emergence_complexity_measures_comparison.svg?branch=master)](https://travis-ci.org/uwescience/emergence_complexity_measures_comparison)
+[![Build Status](https://travis-ci.org/uwescience/complex_py.svg?branch=master)](https://travis-ci.org/uwescience/complex_py)
 
 ### Organization of this repository
 
@@ -35,11 +35,11 @@ This repository is adapted from [Shablona](https://github.com/uwescience/shablon
 
 This repository has the following structure:
 
-    emergence_complexity_measures_comparison/
+    complex_py/
       |- README.md
-      |- emergence_complexity_measures_comparison/
+      |- complex_py/
          |- __init__.py
-         |- emergence_complexity_measures_comparison.py
+         |- complex_py.py
          |- due.py
          |- data/
             |- ...
@@ -62,25 +62,25 @@ This repository has the following structure:
          |- ...
 
 
-The core of this library is the code inside of `emergence_complexity_measures_comparison/emergence_complexity_measures_comparison.py`.
+The core of this library is the code inside of `complex_py/complex_py.py`.
 
 ### Module code
 
-The module code is placed in a file called `emergence_complexity_measures_comparison.py` in the directory called
-`emergence_complexity_measures_comparison`. You can type `import emergence_complexity_measures_comparison as ecmc` in an
+The module code is placed in a file called `complex_py.py` in the directory called
+`complex_py`. You can type `import complex_py as ecmc` in an
 interactive Python session to make the classes and functions defined inside of the
-`emergence_complexity_measures_comparison.py` file in the `ecmc` namespace. 
+`complex_py.py` file in the `ecmc` namespace. 
 
-    from .emergence_complexity_measures_comparison import *
+    from .complex_py import *
 
 ### Project Data
 
-You can create a `emergence_complexity_measures_comparison/data` folder in which you can
+You can create a `complex_py/data` folder in which you can
 organize the data. This provides a standard file-system location for
 the data at:
 
     import os.path as op
-    import emergence_complexity_measures_comparison as sb
+    import complex_py as sb
     data_path = op.join(sb.__path__[0], 'data')
 
 ### Testing
@@ -89,23 +89,23 @@ This library uses the ['pytest'](http://pytest.org/latest/) library for
 testing. 
 
 To run the tests on the command line, change your present working directory to
-the top-level directory of the repository (e.g. `/Users/arokem/code/emergence_complexity_measures_comparison`),
+the top-level directory of the repository (e.g. `/Users/arokem/code/complex_py`),
 and type:
 
-    py.test emergence_complexity_measures_comparison
+    py.test complex_py
 
 This will exercise all of the tests in your code directory. If a test fails, you
 will see a message such as:
 
 
-    emergence_complexity_measures_comparison/tests/test_emergence_complexity_measures_comparison.py .F...
+    complex_py/tests/test_complex_py.py .F...
 
     =================================== FAILURES ===================================
     ________________________________ test_cum_gauss ________________________________
 
       [definition-specific error message]
 
-    emergence_complexity_measures_comparison/tests/test_emergence_complexity_measures_comparison.py:49: AssertionError
+    complex_py/tests/test_complex_py.py:49: AssertionError
     ====================== 1 failed, 4 passed in 0.82 seconds ======================
 
 You can also use a `Makefile` allowing you to run the tests with more
@@ -140,7 +140,7 @@ This library follows the [numpy docstring standard](https://github.com/numpy/num
 which specifies in detail the inputs/outputs of every function, and specifies how to document additional details, such as references to scientific articles,
 notes about the mathematics behind the implementation, etc.
 
-To document `emergence_complexity_measures_comparison`, [sphinx documentation system](http://sphinx-doc.org/) is used. You can build upon a skeleton
+To document `complex_py`, [sphinx documentation system](http://sphinx-doc.org/) is used. You can build upon a skeleton
 documentation system in the `docs` directory already initialized and commited.
 
 Sphinx uses a `Makefile` to build different outputs of your documentation. For example, if you want to generate the HTML rendering of the documentation (web
@@ -153,14 +153,14 @@ This will generate a set of static webpages in the `doc/_build/html`, which you 
 Alternatively, [readthedocs.org](https://readthedocs.org) (careful, *not* readthedocs.**com**) is a service that will run sphinx for you,
 and upload the documentation to their website. To use this service, you will need to register with RTD. After you have done that, you will need to "import your project" from your github account, through the RTD web interface. To make things run smoothly, you also will need to go to the "admin" panel of the project on RTD, and navigate into the "advanced settings" so that you can tell it that your Python configuration file is in `doc/conf.py`:
 
-![RTD conf](https://github.com/uwescience/emergence_complexity_measures_comparison/blob/master/doc/_static/RTD-advanced-conf.png)
+![RTD conf](https://github.com/uwescience/complex_py/blob/master/doc/_static/RTD-advanced-conf.png)
 
- http://emergence_complexity_measures_comparison.readthedocs.org/en/latest/
+ http://complex_py.readthedocs.org/en/latest/
 
 
 ### Installation
 
-A `emergence_complexity_measures_comparison/version.py` contains all of the information needed for the installation and for setting up the [PyPI page](https://pypi.python.org/pypi/emergence_complexity_measures_comparison) for the software. This also makes it possible to install your software with using `pip` and `easy_install`, which are package managers for Python software. The `setup.py` file reads this information from there and passes it to the `setup` function which takes care of the rest.
+A `complex_py/version.py` contains all of the information needed for the installation and for setting up the [PyPI page](https://pypi.python.org/pypi/complex_py) for the software. This also makes it possible to install your software with using `pip` and `easy_install`, which are package managers for Python software. The `setup.py` file reads this information from there and passes it to the `setup` function which takes care of the rest.
 
 
 ### Licensing

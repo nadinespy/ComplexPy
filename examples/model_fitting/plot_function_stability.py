@@ -3,14 +3,14 @@
 Plotting model stability
 ========================
 
-Next we'll show off another demonstration of model fitting with emergence_complexity_measures_comparison.
+Next we'll show off another demonstration of model fitting with complex_py.
 We'll generate a bunch of data with varying levels of signal to noise, and then
 show the stability of the model coefficients for each set of data.
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
-import emergence_complexity_measures_comparison as sb
+import complex_py as sb
 plt.style.use('ggplot')
 
 # Set seed for reproducibility

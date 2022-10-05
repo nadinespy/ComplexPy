@@ -87,17 +87,17 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/emergence_complexity_measures_comparison.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/complex_py.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/emergence_complexity_measures_comparison.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/complex_py.qhc"
 
 devhelp:
 	$(SPHINXBUILD) -b devhelp $(ALLSPHINXOPTS) $(BUILDDIR)/devhelp
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/emergence_complexity_measures_comparison"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/emergence_complexity_measures_comparison"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/complex_py"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/complex_py"
 	@echo "# devhelp"
 
 epub:

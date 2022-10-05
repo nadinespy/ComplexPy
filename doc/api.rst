@@ -5,7 +5,7 @@ API
 Classes
 -------
 
-.. currentmodule:: emergence_complexity_measures_comparison
+.. currentmodule:: complex_py
 
 .. autosummary::
    :template: class.rst

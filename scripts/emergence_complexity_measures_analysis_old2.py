@@ -24,7 +24,7 @@ if __name__ == "__main__":
     # TODO: make library installable
     # paths
     os.chdir('/media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/EmergenceComplexityMeasuresComparison/EmergenceComplexityMeasuresComparison_Python')
-    import emergence_complexity_measures_comparison as ecmc 
+    import complex_py as ecmc 
 
     
     analyses_pathout = '//media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/EmergenceComplexityMeasuresComparison/EmergenceComplexityMeasuresComparison_Python/results/analyses/'

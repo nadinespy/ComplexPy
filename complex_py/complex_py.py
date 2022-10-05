@@ -4,6 +4,10 @@ import numpy as np
 from oct2py import octave as oc 
 from itertools import product
 import pandas as pd
+import matlab.engine
+
+# define Matlab engine
+eng = matlab.engine.start_matlab()
 
 
 #__all__ = ["causal_emergence_phiid", "causal_emergence_practical", "mvar_sim_data", "phiid", "cumgauss"] 
@@ -16,8 +20,6 @@ import pandas as pd
 #          description="Template project for small scientific Python projects",
 #          tags=["reference-implementation"],
 #          path='complex_py')
-
-# TODO: correct doc strings
 
 
 # -----------------------------------------------------------------------------
@@ -192,13 +194,16 @@ def phiid_2sources_2targets(micro, time_lag = 1, redundancy_func = 'mmi'):
     if np.isnan(micro).any() !=  True:
         
         file_path = os.path.abspath(os.path.dirname(__file__))
-        oc.chdir(file_path+'/phiid') 
-        oc.javaaddpath(file_path + '/phiid/infodynamics.jar') 
-        oc.eval('pkg load statistics') 
+        eng.chdir(file_path+'/phiid') 
+        eng.javaaddpath(file_path + '/phiid/infodynamics.jar') 
+        eng.eval('pkg load statistics') 
         
-        phiid = oc.PhiIDFull(micro, time_lag, redundancy_func)
-        os.chdir(file_path)
+        micro = matlab.double(micro.tolist())
+        time_lag = matlab.double(time_lag.tolist())
         
+        phiid = eng.PhiIDFull(micro, time_lag, redundancy_func)
+        eng.chdir(file_path)
+
         return phiid
         
     else: 
@@ -244,11 +249,13 @@ def get_result_for_measure(measure_func, measure_params_dict, data_dict, measure
             
     return pd.concat(emergence_df_temp, ignore_index = True)
 
-def compute_emergence(model_functions, model_variables, emergence_measures, measure_variables, parameters):
+def compute_emergence(model_functions, model_variables, emergence_functions, measure_variables, parameters):
     emergence_df_temp = []
     
     if type(model_functions) != dict:
         raise ValueError('model_functions is not a dict')
+    if type(emergence_functions) != dict:
+        raise ValueError('emergence_functions is not a dict')
     if type(model_variables) != dict: 
         raise ValueError('model_variables is not a dict')
     if type(measure_variables) != dict: 
@@ -272,6 +279,8 @@ def compute_emergence(model_functions, model_variables, emergence_measures, meas
         for item in a_list:
             if type(item) != str: 
                 raise ValueError('at least one list element of value of model_variables is not str') 
+                
+    # TODO: assert that each value in model_functions and emergence_functions is a function
         
   
 
@@ -282,7 +291,7 @@ def compute_emergence(model_functions, model_variables, emergence_measures, meas
             
             data_dict = model_functions[model](**model_params_dict)   
                                           
-            for measure in emergence_measures:   
+            for measure in emergence_functions:   
                 
                 # replace key 'micro' in measure_variables by 'micro_func_mvar' so that we can take 
                 # value of 'micro_func_mvar' in parameters (this is done below)
@@ -315,7 +324,7 @@ def compute_emergence(model_functions, model_variables, emergence_measures, meas
                                              
                 measure_param_dict = {param_name: parameters[param_name] for param_name in 
                                       measure_variables[measure] if param_name not in model_params_dict}
-                df_temp = get_result_for_measure(emergence_measures[measure], measure_param_dict, 
+                df_temp = get_result_for_measure(emergence_functions[measure], measure_param_dict, 
                                                  data_dict, measure)
                 df_temp = df_temp.assign(**{key: value if not callable(value) 
                                             else value.__name__ for key, value in model_params_dict.items()})
@@ -334,7 +343,7 @@ def compute_emergence(model_functions, model_variables, emergence_measures, meas
 # UNDERSTANDING THE ABOVE LOOPS - EXAMPLE
 # 
 # GIVEN VARIABLES:
-# emergence_measures =  {'causal_emergence_phiid': ecmc.causal_emergence_phiid}
+# emergence_functions =  {'causal_emergence_phiid': ecmc.causal_emergence_phiid}
 # model_functions =     {'2node_mvar': generate_2node_mvar_data}
 
 # parameters =          {'time_lag': [1, 3], 
@@ -354,7 +363,7 @@ def compute_emergence(model_functions, model_variables, emergence_measures, meas
 # model:                        '2node_mvar'
 # model_variables[model]:       ['coupling', 'noise_corr', 'time_lag', 'npoints']
 # measure:                      'causal_emergence_phiid'
-# emergence_measures[measure]:  ecmc.causal_emergence_phiid
+# emergence_functions[measure]:  ecmc.causal_emergence_phiid
 # measure_variables[measure]:   ['redundancy_func', 'time_lag']
 # measure_param_dict:           can be {'micro': ds.raw_micro_mvar, 'time_lag': [3], 'redundancy_func': ['ccs']}                                
 #                               --> includes parameters relevant for measure
@@ -382,13 +391,13 @@ def compute_emergence(model_functions, model_variables, emergence_measures, meas
 #                     --> generate_2node_mvar_data() will use keys as variable names and assign it the respective values
 
 #         for [one measure, like 'causal_emergence_phiid'] in [variable which stores all measures and corresponding 
-#              function to calculate it, in this case emergence_measures]:
+#              function to calculate it, in this case emergence_functions]:
 #             measure_param_dict = [store parameter names and parameter values in dict - but only those which are 
 #                                   not already in model_params_dict! -, like {'redundancy_func': ['ccs']}]
 #             data_params_for_measure = [store parameter names and parameter values in dict - but only those which 
 #                                       are in *both* model_params_dict and measure_param_dict, like {'time_lag': [1]}]
-#             partial_measure_func = partial(emergence_measures[measure], **data_params_for_measure)
-#             df_temp = get_result_for_measure(emergence_measures[measure], measure_param_dict, data_dict, measure)
+#             partial_measure_func = partial(emergence_functions[measure], **data_params_for_measure)
+#             df_temp = get_result_for_measure(emergence_functions[measure], measure_param_dict, data_dict, measure)
 #             df_temp = df_temp.assign(**model_params_dict)
 #             big_df_list.append(df_temp)
 
@@ -427,11 +436,11 @@ def compute_emergence(model_functions, model_variables, emergence_measures, meas
 
 
 # UNDERSTANDING get_result_for_measures(measure_func, measure_params_dict, data, measure_name):
-# function is called as: df_temp = get_result_for_measure(emergence_measures[measure], measure_param_dict, 
+# function is called as: df_temp = get_result_for_measure(emergence_functions[measure], measure_param_dict, 
 #                                                         data_dict, measure) 
 #
 # INPUT VARIABLES:
-# emergence_measures[measure] = cp.causal_emergence_phiid 
+# emergence_functions[measure] = cp.causal_emergence_phiid 
 # measure_param_dict =          {'time_lag': [3], 'redundancy_func': ['ccs']}
 # measure =                     'causal_emergence_phiid'
 #                               data_dict

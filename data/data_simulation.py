@@ -14,7 +14,8 @@ from oct2py import octave as oc
 # FUNCTIONS FOR DATA GENERATION
 # -----------------------------------------------------------------------------
 
-def generate_2node_mvar_data(coupling = None, npoints = None, time_lag = None, noise_corr = None, macro_func_mvar = None, micro_func_mvar = None):
+def generate_2node_mvar_data(coupling = None, npoints = None, time_lag = None, noise_corr = None, 
+                             macro_func_mvar = None, micro_func_mvar = None):
     data_dict = dict()
     coupling_matrix = np.matrix([[coupling, coupling], [coupling, coupling]])
     sim_data = mvar_sim_data(coupling_matrix, npoints = npoints, time_lag = time_lag, noise_corr = noise_corr)
@@ -63,20 +64,26 @@ def mvar_sim_data(coupling_matrix, npoints = None, time_lag = None, noise_corr =
 
 
 # FINAL GOAL: generate data for all other models as well
-# def generate_8node_mvar_global_coup_data(coupling = None, npoints = None, time_lag = None, noise_corr = None):
-#     sim_data = ecmc.mvar_sim_data(coupling, npoints = npoints, time_lag = time_lag, err = noise_corr)
+# def generate_8node_mvar_global_coup_data(coupling = None, npoints = None, time_lag = None, 
+#                                          noise_corr = noise_corr):
+#     sim_data = ecmc.mvar_sim_data(coupling, npoints = npoints, time_lag = time_lag, noise_corr = noise_corr)
 #     return sim_data
 
-# def generate_8node_mvar_diff_top_data(coupling_matrix = None, npoints = None, time_lag = None, noise_corr = None):
-#     sim_data = ecmc.mvar_sim_data(coupling_matrix, npoints = npoints, time_lag = time_lag, err = noise_corr)
+# def generate_8node_mvar_diff_top_data(coupling_matrix = None, npoints = None, time_lag = None, 
+#                                       noise_corr = noise_corr):
+#     sim_data = ecmc.mvar_sim_data(coupling_matrix, npoints = npoints, time_lag = time_lag, 
+#                                   noise_corr = noise_corr)
 #     return sim_data
 
 # def generate_8node_mvar_er_data(density_vec = None, npoints = None, time_lag = None, noise_corr = None):
-#     sim_data = ecmc.mvar_sim_data(density_vec, npoints = npoints, time_lag = time_lag, err = noise_corr)
+#     sim_data = ecmc.mvar_sim_data(density_vec, npoints = npoints, time_lag = time_lag, 
+#                                   noise_corr = noise_corr)
 #     return sim_data
 
-# def generate_kuramoto_network(coupling = None, npoints = None, phase_vec = None, intra_comm_size = None, n_comm = None):
-#     sim_data = ecmc.mvar_sim_data(coupling, npoints = npoints, phase = phase_vec, intra_comm_size = intra_comm_size, n_comm = n_comm)
+# def generate_kuramoto_network(coupling = None, npoints = None, phase_vec = None, intra_comm_size = None, 
+#                               n_comm = None):
+#     sim_data = ecmc.mvar_sim_data(coupling, npoints = npoints, phase = phase_vec, 
+#                                   intra_comm_size = intra_comm_size, n_comm = n_comm)
 #     return sim_data
 
 # -----------------------------------------------------------------------------

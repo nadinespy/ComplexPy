@@ -3,8 +3,8 @@ import os
 from setuptools import setup, find_packages
 PACKAGES = find_packages()
 
-# Get version and release info, which is all stored in emergence_complexity_measures_comparison/version.py
-ver_file = os.path.join('emergence_complexity_measures_comparison', 'version.py')
+# Get version and release info, which is all stored in complex_py/version.py
+ver_file = os.path.join('complex_py', 'version.py')
 with open(ver_file) as f:
     exec(f.read())
 

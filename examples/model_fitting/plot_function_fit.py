@@ -1,11 +1,11 @@
 """
 ================================
-Fitting a function with emergence_complexity_measures_comparison
+Fitting a function with complex_py
 ================================
 
 Shablona contains a number of tools for fitting functions to
 data. This example shows us how to load data into python, fit
-a function to our datapoints with emergence_complexity_measures_comparison, and then plot the
+a function to our datapoints with complex_py, and then plot the
 result.
 
 This example is meant to demonstrate the functionality of
@@ -16,14 +16,14 @@ documents from python files.
 import os.path as op
 import numpy as np
 import matplotlib.pyplot as plt
-import emergence_complexity_measures_comparison as sb
+import complex_py as sb
 plt.style.use('ggplot')
 
 ###############################################################################
 # Loading data
 # ------------
 #
-# First, we'll load some data into emergence_complexity_measures_comparison.
+# First, we'll load some data into complex_py.
 data_path = op.join(sb.__path__[0], 'data')
 
 ortho_x, ortho_y, ortho_n = sb.transform_data(op.join(data_path, 'ortho.csv'))
@@ -33,7 +33,7 @@ para_x, para_y, para_n = sb.transform_data(op.join(data_path, 'para.csv'))
 # Fitting a model
 # ---------------
 #
-# With emergence_complexity_measures_comparison, models are created with the :ref:Model class.
+# With complex_py, models are created with the :ref:Model class.
 # This class has a `fit` method that returns the coefficients for the given
 # input data.
 

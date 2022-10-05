@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# emergence_complexity_measures_comparison documentation build configuration file, created by
+# complex_py documentation build configuration file, created by
 # sphinx-quickstart on Tue Apr 14 10:29:06 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -17,7 +17,7 @@ import sys
 import os
 
 # General information about the project.
-project = 'emergence_complexity_measures_comparison'
+project = 'complex_py'
 copyright = '2021, Nadine Spychala'
 
 currentdir = os.path.abspath(os.path.dirname(__file__))
@@ -76,7 +76,7 @@ sphinx_gallery_conf = {
     # path where to save gallery generated examples
     'gallery_dirs': 'auto_examples',
     # To auto-generate example sections in the API
-    'doc_module': ('emergence_complexity_measures_comparison',),
+    'doc_module': ('complex_py',),
     # Auto-generated mini-galleries go here
     'backreferences_dir': 'gen_api'
 }
@@ -216,7 +216,7 @@ html_domain_indices = False
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'emergence_complexity_measures_comparisondoc'
+htmlhelp_basename = 'complex_pydoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -236,7 +236,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'emergence_complexity_measures_comparison.tex', 'emergence_complexity_measures_comparison Documentation',
+  ('index', 'complex_py.tex', 'complex_py Documentation',
    'Nadine Spychala', 'manual'),
 ]
 
@@ -266,7 +266,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'emergence_complexity_measures_comparison', 'emergence_complexity_measures_comparison Documentation',
+    ('index', 'complex_py', 'complex_py Documentation',
      ['Nadine Spychala'], 1)
 ]
 
@@ -280,8 +280,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'emergence_complexity_measures_comparison', 'emergence_complexity_measures_comparison Documentation',
-   'Nadine Spychala', 'emergence_complexity_measures_comparison', 'One line description of project.',
+  ('index', 'complex_py', 'complex_py Documentation',
+   'Nadine Spychala', 'complex_py', 'One line description of project.',
    'Miscellaneous'),
 ]
 
