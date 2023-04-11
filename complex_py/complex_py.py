@@ -1,3 +1,11 @@
+"""Add docstring: module for ...
+
+Functions:
+  causal_emergence_phiid - returns ...
+  causal_emergence_practical - ...
+  ...
+"""
+
 import os
 import numpy as np
 #from .due import due, Doi
@@ -51,6 +59,14 @@ def causal_emergence_phiid(data_dict, time_lag = 1, redundancy_func = 'mmi'):
     -----
     ...
 
+    ADJUST TO SPHYNX FROMATTING?
+    Calculate the nth Fibonacci number.
+
+    A recursive implementation of Fibonacci array elements.
+
+    :param n: integer
+    :raises ValueError: raised if n is less than zero
+    :returns: Fibonacci number
     """
     #TODO: change to isinstance
     if not isinstance(data_dict, dict):
