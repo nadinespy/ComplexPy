@@ -1,42 +1,39 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-'''
-Created on Wed Aug  4 13:55:56 2021
-
-@author: nadinespy
-
-This script calculates measures of emergence & complexity using cp.compute_emergence() and saves
-all results and parameters in a pandas dataframe.
-
-''' 
-
-
+# %%
 import os
 import numpy as np
- 
-#%% 
 
 if __name__ == '__main__':
     
 
     # import libraries
-    # TODO: make library installable
-    os.chdir('/media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/'\
-             'EmergenceComplexityMeasuresComparison/EmergenceComplexityMeasuresComparison_ComplexPy')
-    import complex_py as cp 
-    
-    os.chdir('/media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/'\
-             'EmergenceComplexityMeasuresComparison/EmergenceComplexityMeasuresComparison_ComplexPy/data')
-    import data_simulation as ds
-    
-    # specify directories
-    main_directory = '//media/nadinespy/NewVolume/my_stuff/work/PhD/my_projects/'\
-        'EmergenceComplexityMeasuresComparison/EmergenceComplexityMeasuresComparison_ComplexPy'
-    analyses_pathout = main_directory + '/results/analyses/'
-    plots_pathout = main_directory + '/results/plots/'
-    data_pathin = main_directory + '/data/'
 
-#%%
+    #os.chdir('/complexpy')
+    import complexpy as cp 
+    #os.chdir('data_simulation')
+    import complexpy.data_simulation as ds
+    
+    pathout_plots = '../results/plots/'
+    pathout_analyses = '../results/analyses/'
+
+    # if data exists
+    pathin_data = '../data/'
+
+    # once empirical_data module exists:
+    # import empirical_data as ed
+
+
+# %%
+from complexpy import shannon_wpe
+
+#cp.shannon_wpe()
+
+#print(cp.__all__)
+dir(cp)
+
+#from complexpy import shannon_wpe
+#from data_simulation import generate_2node_mvar_data
+
+# %%
 
 # -----------------------------------------------------------------------------
 # MODEL & MEASURE PARAMETERS IN PANDAS DATAFRAME
@@ -96,16 +93,16 @@ if __name__ == '__main__':
 
 # MEASURE VARIABLES SPECIFIED IN COMPLEXPY LIBRARY:
     
-# measure:                                          'causal_emergence_phiid' 
-#                                                   (dict with causal_emergence_phiid,  
-#                                                   downward_causation_phiid, causal_decoupling_phiid)
-#                                                   'causal_emergence_practical' 
+# measure:                                          'phiid_wpe' 
+#                                                   (dict with phiid_wpe,  
+#                                                   phiid_dc, phiid_cd)
+#                                                   'shannon_wpe' 
 #                                                   (dict with causal_emergence_pract,  
 #                                                   downward_causation_pract, causal_decoupling_pract)
 #                                                   'dynamical_independence'
 #                                                   'g_emergence'
 
-# redundancy_func:                                  'mmi'
+# red_func:                                  'mmi'
 #                                                   'ccs'      
 
 # time_lag:                                         1, 10, 100 
@@ -119,52 +116,64 @@ if __name__ == '__main__':
 
 # model-function pairs where keys give the model and values give the corresponding function for simulation;
 # keys in model_functions and model_variables need to be the same 
-model_functions =       {'2node_mvar':                   ds.generate_2node_mvar_data}
+model_functions =       {'2node_mvar':              ds.generate_2node_mvar_data}
 
 # measure-function pairs, where keys give the measure, and values the corresponding function;
 # keys in emergence_measures and measure_variables need to be the same
-emergence_functions =    {'causal_emergence_phiid':      cp.causal_emergence_phiid} 
+#emergence_functions =    {'phiid_wpe':              cp.phiid_wpe,
+#                          'shannon_wpe':            cp.shannon_wpe} 
 
-# model-variables pairs where keys give the model and values give the corresponding parameters of the model;
+emergence_functions =    {'phiid_wpe':              cp.phiid_wpe}
+
+# model-variable pairs where keys give the model and values give the corresponding parameters of the model;
 # each key *has* to include 'micro_func_mvar'in the parameters; depending on which measures are specified in 
 # emergence_measures, it may also need to include 'macro_func_mvar' 
-model_variables =       {'2node_mvar':                  ['coupling', 'noise_corr', 'time_lag', 'npoints', 
+model_variables =       {'2node_mvar':              ['coupling', 'noise_corr', 'time_lag_for_model', 'npoints', 
                                                          'macro_func_mvar', 'micro_func_mvar']}
 
 # variable names need to be the same as parameter names in the measure functions; each key *has* to include 
 # 'micro' in the parameters; depending on which measures are specified in emergence_measures, it may also 
 # need to include 'macro' 
-measure_variables =     {'causal_emergence_phiid':      ['micro', 'redundancy_func', 'time_lag']}
+#measure_variables =     {'phiid_wpe':               ['micro', 'red_func', 'time_lag_for_measure'],
+#                         'shannon_wpe':             ['micro', 'macro', 'time_lag_for_measure']}
+
+measure_variables =     {'phiid_wpe':               ['micro', 'red_func', 'time_lag_for_measure']}
 
 # all parameters relevant for either measures or data generation; will need to include keys and values only 
 # for functions for macro and micro variables, not for macro and micro variables themselves
-parameters =            {'time_lag':                    [1, 10, 100], 
-                         'coupling':                    np.linspace(0.045, 0.45, num = 10),
-                         'noise_corr':                  np.linspace(0.01, 0.9, num = 10),
-                         'redundancy_func':             ['mmi','ccs'],
-                         'npoints':                     [2000],
-                         'macro_func_mvar':             [ds.sum_micro_mvar],
-                         'micro_func_mvar':             [ds.raw_micro_mvar]}
+parameters =            {'time_lag_for_model':      [10, 100], 
+                         'time_lag_for_measure':    [10, 100],
+                         'coupling':                np.linspace(0.045, 0.45, num = 10),
+                         'noise_corr':              np.linspace(0.01, 0.9, num = 10),
+                         'red_func':                ['mmi','ccs'],
+                         'npoints':                 [2000],
+                         'macro_func_mvar':         [ds.sum_micro_mvar],
+                         'micro_func_mvar':         [ds.raw_micro_mvar]}
 
 # FINAL GOAL:
-# emergence_measures =  {'causal_emergence_phiid':      cp.causal_emergence_phiid, 
-#                        'causal_emergence_practical':  cp.causal_emergence_practical, 
+# emergence_measures =  {'phiid_wpe':      cp.phiid_wpe, 
+#                        'shannon_wpe':  cp.shannon_wpe, 
 #                        'dynamical_independence':      cp.dynamical_independence, 
 #                        'g_emergence':                 cp.g_emergence}
 
 # model_functions =     {'2node_mvar':                  ds.generate_2node_mvar_data,
 #                        '8node_mvar_global_coup':      ds.generate_8node_global_coup_data, 
 #                        '8node_mvar_er':               ds.generate_8node_mvar_er_data,
-#                        '8node_mvar_diff_top':         ds.generate_8node_mvar_diff_top_data}
+#                        '8node_mvar_diff_top':         ds.generate_8node_mvar_diff_top_data,
+#                        '12node_kuramoto':             ds.generate_12node_kuramoto,
+#                        '256node_kuramoto':            ds.generate_256node_kuramoto}
+
+# data = load some data
 
 # load file for different 8-node MVAR architectures
 # file_to_read = open(data_pathin+r'/various_nets.pkl', 'rb') 
 # various_nets = pickle.load(file_to_read) 
 
+# if data is simulated:
 # parameters =          {'time_lag':                    [1, 10, 100], 
 #                        'coupling':                    np.linspace(0.045, 0.45, num = 10),
 #                        'noise_corr':                  np.linspace(0.01, 0.9, num = 10),
-#                        'redundancy_func':             ['mmi','ccs'],
+#                        'red_func':             ['mmi','ccs'],
 #                        'npoints':                     [2000, 10000],
 #                        '8node_architectures':         various_nets,
 #                        'global_coupling':             np.linspace(0.05, 0.9, num = 10),
@@ -175,6 +184,13 @@ parameters =            {'time_lag':                    [1, 10, 100],
 #                        'micro_func_kuramoto':         [ds.raw_val_kuramoto, ds.phase_kuramoto, 
 #                                                        ds.sync_kuramoto, ds.sync_bin_kuramoto]}
 
+# if data is empirical:
+# parameters =          {'time_lag':                    [1, 10, 100], 
+#                        'red_func':             ['mmi','ccs'],
+#                        'npoints':                     [2000, 10000],
+#                        'macro_func_mvar':             [ed.sum_micro_data],
+#                        'micro_func_mvar':             [ed.raw_val_data]}
+
 # model_variables =     {'2node_mvar':                  ['coupling', 'noise_corr', 'time_lag', 'npoints', 
 #                                                        'macro_func_mvar', 'micro_func_mvar'], 
 #                        '8node_mvar_er':               ['density_vec', 'noise_corr', 'time_lag', 'npoints', 
@@ -183,21 +199,36 @@ parameters =            {'time_lag':                    [1, 10, 100],
 #                                                        'macro_func_mvar', 'micro_func_mvar'],
 #                        '8node_mvar_diff_top':         ['coupling_matrix', 'noise_corr', 'time_lag', 
 #                                                        'npoints', 'macro_func_mvar', 'micro_func_mvar'],
-#                        '8node_kuramoto':              ['coupling', 'beta', 'time_lag', 'npoints', 
+#                        '12node_kuramoto':             ['coupling', 'beta', 'time_lag', 'npoints', 
 #                                                        'macro_func_kuramoto', 'micro_func_kuramoto'],
 #                        '256node_kuramoto':            ['coupling', 'beta', 'time_lag', 'npoints', 
 #                                                        'macro_func_kuramoto', 'micro_func_kuramoto']}
 
-# measure_variables =   {'causal_emergence_phiid':      ['micro', 'redundancy_func', 'time_lag'],
-#                        'causal_emergence_practical':  ['macro', 'micro', 'time_lag'],
+# measure_variables =   {'phiid_wpe':      ['micro', 'red_func', 'time_lag'],
+#                        'shannon_wpe':  ['macro', 'micro', 'time_lag'],
 #                        'dynamical_independence':      ['macro', 'micro', 'time_lag'],
 #                        'g_emergence':                 ['macro', 'micro', 'time_lag']}
 
-#%%
+
+# %%
 
 # compute emergence for all parameter combinations - ONLY ONE LINE OF CODE!
-emergence_df = cp.compute_emergence(model_functions, model_variables, 
-                                    emergence_functions, measure_variables, parameters)
+
+# if data is simulated
+emergence_df = cp.compute_emergence(model_functions, model_variables, emergence_functions, measure_variables, parameters)
+
+# if data is empirical
+# emergence_df = cp.compute_emergence(data, emergence_functions, measure_variables, parameters)
+
+# it actually needs to be:
+
+# if data is empirical:
+# emergence_df = cp.compute_emergence(emergence_functions, measure_variables, data=data, parameters)
+
+# if data is simulated:
+# emergence_df = cp.compute_emergence(emergence_functions, measure_variables, model_functions=model_functions, model_variables=model_variables, parameters)
+
+
 
 
             
@@ -206,5 +237,13 @@ emergence_df = cp.compute_emergence(model_functions, model_variables,
 
     
     
+
+
+
+
+# %%
+from importlib import reload 
+reload(cp)
+reload(ds)
 
 

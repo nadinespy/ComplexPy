@@ -16,12 +16,12 @@ import numpy as np
 
 #%% plotting
 
-causal_emergence_phiid_labels = ["phiid_emergence_capacity", "phiid_downward_causation", "phiid_causal_decoupling"]
+phiid_wpe_labels = ["phiid_emergence_capacity", "phiid_downward_causation", "phiid_causal_decoupling"]
 
 y_ticklabels_8node = ['optimal_A', 'optimal_B', 'small_world', 'two_communities', 'fully_connected', 'ring', 'uni_ring']
 
 
-for o in causal_emergence_phiid_labels:
+for o in phiid_wpe_labels:
     temp_model_measure = pd.pivot_table(emergence_df3.loc[(emergence_df3.model == 'eight_node_mvar_model_erdoes_renyi') & (emergence_df3.measure == o)],
                                         values ='value', index = ['coupling'], columns = ['noise_corr'], sort  = False) 
     
@@ -43,12 +43,12 @@ for o in causal_emergence_phiid_labels:
     
 #%% plotting
 
-causal_emergence_phiid_labels = ["phiid_emergence_capacity", "phiid_downward_causation", "phiid_causal_decoupling"]
+phiid_wpe_labels = ["phiid_emergence_capacity", "phiid_downward_causation", "phiid_causal_decoupling"]
 
 y_ticklabels_8node = ['optimal_A', 'optimal_B', 'small_world', 'two_communities', 'fully_connected', 'ring', 'uni_ring']
 
 
-for o in causal_emergence_phiid_labels:
+for o in phiid_wpe_labels:
     temp_model_measure = pd.pivot_table(emergence_df2.loc[(emergence_df2.model == 'eight_node_mvar_model_different_architectures') & (emergence_df2.measure == o)], values ='value', index = 'coupling', columns ='noise_corr', sort  = False) 
         
     num_ticks = 10
@@ -70,10 +70,10 @@ for o in causal_emergence_phiid_labels:
     # something has been deleted/gone wrong here - need to fix this
     if '2node' in model:
         num_ticks = 10
-        yticks = np.linspace(0, len(causal_decoupling_phiid_ccs_2node_all_err_coup1) - 1, num_ticks, dtype = int)
-        xticks = np.linspace(0, len(causal_decoupling_phiid_ccs_2node_all_err_coup1) - 1, num_ticks, dtype = int)
-        xticklabels = ["{:.2f}".format(causal_decoupling_phiid_ccs_2node_all_err_coup1.columns[idx]) for idx in xticks]
-        yticklabels = ["{:.2f}".format(causal_decoupling_phiid_ccs_2node_all_err_coup1.index[idx]) for idx in yticks]
+        yticks = np.linspace(0, len(phiid_cd_ccs_2node_all_err_coup1) - 1, num_ticks, dtype = int)
+        xticks = np.linspace(0, len(phiid_cd_ccs_2node_all_err_coup1) - 1, num_ticks, dtype = int)
+        xticklabels = ["{:.2f}".format(phiid_cd_ccs_2node_all_err_coup1.columns[idx]) for idx in xticks]
+        yticklabels = ["{:.2f}".format(phiid_cd_ccs_2node_all_err_coup1.index[idx]) for idx in yticks]
     
     elif '8node' in model:
         num_ticks = 7

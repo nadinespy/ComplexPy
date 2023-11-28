@@ -7,25 +7,29 @@ Created on Mon Dec 27 17:44:25 2021
 """
 
 import numpy as np
-import os
-#from oct2py import octave as oc 
+import os 
+
+import matlab.engine
+
+# define Matlab engine
+eng = matlab.engine.start_matlab()
 
 # -----------------------------------------------------------------------------
 # FUNCTIONS FOR DATA GENERATION
 # -----------------------------------------------------------------------------
 
-def generate_2node_mvar_data(coupling = None, npoints = None, time_lag = None, noise_corr = None, 
+def generate_2node_mvar_data(coupling = None, npoints = None, time_lag_for_model = None, noise_corr = None, 
                              macro_func_mvar = None, micro_func_mvar = None):
     data_dict = dict()
     coupling_matrix = np.matrix([[coupling, coupling], [coupling, coupling]])
-    sim_data = mvar_sim_data(coupling_matrix, npoints = npoints, time_lag = time_lag, noise_corr = noise_corr)
+    sim_data = mvar_sim_data(coupling_matrix, npoints = npoints, time_lag_for_model = time_lag_for_model, noise_corr = noise_corr)
 
     data_dict['macro'] = macro_func_mvar(sim_data) if macro_func_mvar is not None else None
     data_dict['micro'] = micro_func_mvar(sim_data) if micro_func_mvar is not None else sim_data
 
     return data_dict
 
-def mvar_sim_data(coupling_matrix, npoints = None, time_lag = None, noise_corr = None):
+def mvar_sim_data(coupling_matrix, npoints = None, time_lag_for_model = None, noise_corr = None):
     """
     Purpose : ...
     
@@ -51,12 +55,23 @@ def mvar_sim_data(coupling_matrix, npoints = None, time_lag = None, noise_corr =
     
     if np.isnan(coupling_matrix).any() != True:
                 
-        file_path = os.path.abspath(os.path.dirname(__file__))
-        oc.addpath(file_path)    
-        oc.eval('pkg load statistics') 
+        #file_path = os.path.abspath(os.path.dirname(__file__))
+        #oc.addpath(file_path)    
+        #oc.eval('pkg load statistics') 
         
-        sim_data = oc.statdata_coup_errors1(coupling_matrix, npoints, time_lag, noise_corr)
-        
+        #eng.eval('pkg load statistics') 
+        #eng.chdir('/src')
+        #os.chdir('src/phiid')
+        eng.addpath('src/phiid')
+
+        coupling_matrix = matlab.double(coupling_matrix.tolist())
+        npoints = matlab.double(npoints)
+        time_lag_for_model = matlab.double(time_lag_for_model)
+        noise_corr = matlab.double(noise_corr)
+
+        sim_data = eng.sim_mvar_network(npoints, noise_corr, coupling_matrix, time_lag_for_model)
+        sim_data = np.array(sim_data)
+
         return sim_data
     
     else: 
