@@ -123,7 +123,7 @@ model_functions =       {'2node_mvar':              ds.generate_2node_mvar_data}
 #emergence_functions =    {'phiid_wpe':              cp.phiid_wpe,
 #                          'shannon_wpe':            cp.shannon_wpe} 
 
-emergence_functions =    {'phiid_wpe':              cp.phiid_wpe}
+emergence_functions =    {'shannon_wpe':            cp.shannon_wpe}
 
 # model-variable pairs where keys give the model and values give the corresponding parameters of the model;
 # each key *has* to include 'micro_func_mvar'in the parameters; depending on which measures are specified in 
@@ -137,7 +137,7 @@ model_variables =       {'2node_mvar':              ['coupling', 'noise_corr', '
 #measure_variables =     {'phiid_wpe':               ['micro', 'red_func', 'time_lag_for_measure'],
 #                         'shannon_wpe':             ['micro', 'macro', 'time_lag_for_measure']}
 
-measure_variables =     {'phiid_wpe':               ['micro', 'red_func', 'time_lag_for_measure']}
+measure_variables =     {'shannon_wpe':             ['micro', 'macro', 'time_lag_for_measure']}
 
 # all parameters relevant for either measures or data generation; will need to include keys and values only 
 # for functions for macro and micro variables, not for macro and micro variables themselves

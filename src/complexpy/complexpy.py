@@ -20,7 +20,7 @@ eng = matlab.engine.start_matlab()
 # -----------------------------------------------------------------------------
 
 
-def phiid_wpe(data_dict, time_lag_for_measure = 1, red_func = 'mmi'):
+def phiid_wpe(data_dict, time_lag_for_measure=1, red_func='mmi'):
     """
     Purpose : Compute PhiID-based Causal Emergence.
     
@@ -34,7 +34,7 @@ def phiid_wpe(data_dict, time_lag_for_measure = 1, red_func = 'mmi'):
         Redundancy function to do a PhiID. The default is 'mmi'.
 
     Returns
-    -------
+    -------from inspect import isfunction
     phiid_wpe_dict : dictionary where keys are 
         'phiid_wpe', 'phiid_dc', 
         'phiid_cd', and value is float
@@ -99,7 +99,7 @@ def phiid_wpe(data_dict, time_lag_for_measure = 1, red_func = 'mmi'):
 
     return phiid_wpe_dict
 
-def shannon_wpe(data_dict, time_lag_for_measure = 1):
+def shannon_wpe(data_dict, time_lag_for_measure=1):
     """
     Purpose : Compute Shannon-based Causal Emergence.
     
@@ -146,13 +146,12 @@ def shannon_wpe(data_dict, time_lag_for_measure = 1):
     shannon_dc = eng.EmergenceDelta(micro, macro, time_lag_for_measure, 'Gaussian') 
     shannon_cd = eng.EmergenceGamma(micro, macro, time_lag_for_measure, 'Gaussian')
     
-    shannon_wpe_dict = {'shannon_wpe': shannon_wpe, 
-                                   'shannon_dc': shannon_dc, 
-                                   'shannon_cd': shannon_cd}
+    shannon_wpe_dict = {'shannon_wpe': shannon_wpe, 'shannon_dc': shannon_dc,
+                        'shannon_cd': shannon_cd}
     
     return shannon_wpe_dict
     
-def phiid_2sources_2targets(micro, time_lag_for_measure = 1, red_func = 'mmi'):
+def phiid_2sources_2targets(micro, time_lag_for_measure=1, red_func='mmi'):
     """
     Purpose : Compute Integrated Information Decomposition.
     
@@ -192,10 +191,10 @@ def phiid_2sources_2targets(micro, time_lag_for_measure = 1, red_func = 'mmi'):
         micro = matlab.double(micro.tolist())
         time_lag_for_measure = matlab.double(time_lag_for_measure)
         
-        phiid = eng.PhiIDFull(micro, time_lag_for_measure, red_func)
+        phiid_dict = eng.PhiIDFull(micro, time_lag_for_measure, red_func)
         #eng.chdir(file_path)
 
-        return phiid
+        return phiid_dict
         
     else: 
         return float('NaN')
@@ -217,7 +216,7 @@ def phiid_2sources_2targets(micro, time_lag_for_measure = 1, red_func = 'mmi'):
 # PARAMETER SWEEP
 # -----------------------------------------------------------------------------
 
-def get_result_for_measure(measure_func, measure_params_dict, data_dict, measure_name):                          
+def get_result_for_measure(measure_name, measure_func, measure_params_dict, data_dict):                          
     """
     Purpose : Compute Integrated Information Decomposition.
     
@@ -228,13 +227,13 @@ def get_result_for_measure(measure_func, measure_params_dict, data_dict, measure
     measure_params_dict : dictionary
         Dictionary with measure parameters.
     data_dict : dictionary
-        Dictionary with model parameters.
+        Dictionary with macro and micro variables.
     measure_name : string
-	Measure.
+	    Measure.
     Returns
     -------
     emergence_df_temp : dataframe
-        Includes measure, measure and model parameters.
+        Includes result, measure and measure parameters.
 
     """
     
@@ -244,8 +243,8 @@ def get_result_for_measure(measure_func, measure_params_dict, data_dict, measure
         raise ValueError('data_dict is not a dict')
     if not callable(measure_func):
         raise ValueError('measure_func is not a function')
-    if type(measure_params_dict) != dict:
-        raise ValueError('measure_params_dict is not a dict')
+    if type(measure_params_dict) != dict or measure_params_dict == []:
+        raise ValueError('measure_params_dict is not a dict or is empty')
     if type(measure_name) != str:
         raise ValueError('measure_name is not a str')
     
@@ -266,7 +265,7 @@ def get_result_for_measure(measure_func, measure_params_dict, data_dict, measure
             
             emergence_df_temp.append(df_temp)
             
-    return pd.concat(emergence_df_temp, ignore_index = True)
+    return pd.concat(emergence_df_temp, ignore_index=True)
 
 def compute_emergence(model_functions, model_variables, emergence_functions, measure_variables, parameters):
     """
@@ -322,9 +321,10 @@ def compute_emergence(model_functions, model_variables, emergence_functions, mea
         for item in a_list:
             if type(item) != str: 
                 raise ValueError('at least one list element of value of model_variables is not str') 
-                
-    # TODO: assert that each value in model_functions and emergence_functions is a function
-        
+    
+    for model_function, emergence_function in zip(model_functions.values(), emergence_functions.values()):
+        assert(callable(model_function))
+        assert(callable(emergence_function))        
   
     for model in model_functions:
         for params in product(*[parameters[param_name] for param_name in model_variables[model]]):          
@@ -373,8 +373,8 @@ def compute_emergence(model_functions, model_variables, emergence_functions, mea
                                       measure_variables[measure] if param_name not in model_params_dict}
                 
                 # includes only measure parameters
-                df_temp = get_result_for_measure(emergence_functions[measure], measure_params_dict, 
-                                                 data_dict, measure)
+                df_temp = get_result_for_measure(measure, emergence_functions[measure], measure_params_dict, 
+                                                 data_dict)
                 
                 # includes both measure and model parameters
                 df_temp = df_temp.assign(**{key: value if not callable(value) 
