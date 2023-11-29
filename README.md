@@ -8,7 +8,9 @@ It has long been private due to unsettled publications statuses of software used
 # General Idea
 Multi-scale relationships in emergent phenomena and complex systems are studied across various disciplines. They explore the unresolved subject of how macro- and micro-scales relate to each other – are they independent, reducible, or is their relationship more complex? Examples of the phenomena in question would be, for instance, the way galaxies are formed, how crowds and herds behave, or how conscious human experience arises from the collective activity of neurons. An emergence poster child is given by a moving flock of starlings, the aesthetics of which is appealing to many.
 
-[INSERT FLOCK VIDEO]
+[INSERT FLOCK VIDEO](https://github.com/nadinespy/ComplexPy/assets/46372572/f487455d-a412-4fe9-b69b-f52866715ee3)
+
+
 
 Historically, the lack of formalism hindered empirical investigation, but recent research introduced quantitative measures based on information theory to quantify emergence in systems whose components evolve over *time*. Measuring emergence is new terrain, therefore requiring extensive testing and cumulative evidence. A Python library with all measures at one place will facilitate this endeavour, and help drive the iterative cycle of theory-building and empirical testing. 
 
