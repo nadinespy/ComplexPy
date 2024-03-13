@@ -83,3 +83,6 @@ following from the command line:
     make test
 
 ### Styling
+
+
+(see also a description of this project in this [OLS-4 speed blog post](https://openlifesci.org/posts/2022/03/17/ols-4-participant-nadine-spychala/))
