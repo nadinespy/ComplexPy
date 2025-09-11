@@ -95,7 +95,7 @@ pip install .
 - MATLAB Engine is currently required for this package. Importing `complexpy` starts the MATLAB Engine, and core functions (`phiid_wpe`, `phiid_2sources_2targets`, `shannon_wpe`) call MATLAB/Octave code under `src/phiid` and `src/shannon_wpe`.
 - Setup tips: ensure a local MATLAB installation and the MATLAB Engine for Python are installed (see MathWorks docs), then run `poetry install`.
 
-# The Big Picture - Future Plans
+## The Big Picture - Future Plans
  
 - Port MATLAB functions to Python to remove the MATLAB Engine dependency.
 - Add further measures of emergence/complexity, more time-series models, and richer visssh -T git@github.com || trueualizations.
