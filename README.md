@@ -39,22 +39,115 @@ cp.shannon_wpe()
 
 (```cp.phiid_wpe()``` calculates Whole-Parts-Emergence based on Partial Information Decomposition, whereas ```cp.shannon_wpe()``` computes the same measure based on standard Shannon information.)
 
+# Installation
+
+## Requirements
+- Python >=3.9,<3.12 (3.10 or 3.11 recommended)
+- MATLAB (for MATLAB Engine for Python).
+
+## Install with Poetry (recommended)
+```bash
+# from the repository root
+poetry env use python3.10    # or python3.11
+
+# install runtime dependencies
+poetry install
+
+# optionally include dev tools (e.g., Jupyter)
+poetry install --with dev
+```
+
+Activate the virtual environment (optional; you can also prefix commands with `poetry run`):
+```bash
+poetry shell
+```
+
+## Verify the installation
+```bash
+# run tests
+poetry run pytest -q
+
+# show package version
+poetry run python -c "import complexpy; print(complexpy.__version__)"
+```
+
+## Run example analysis
+```bash
+poetry run python scripts/complexpy_analysis.py
+# or, if you activated the shell:
+# python scripts/complexpy_analysis.py
+```
+
+## Using Jupyter (if installed with --with dev)
+```bash
+poetry run jupyter lab
+```
+
+## Installing without Poetry (not preferred)
+```bash
+python3.10 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install .
+```
+
+## Notes on MATLAB Engine
+- MATLAB Engine is currently required for this package. Importing `complexpy` starts the MATLAB Engine, and core functions (`phiid_wpe`, `phiid_2sources_2targets`, `shannon_wpe`) call MATLAB/Octave code under `src/phiid` and `src/shannon_wpe`.
+- Setup tips: ensure a local MATLAB installation and the MATLAB Engine for Python are installed (see MathWorks docs), then run `poetry install`.
+
 # The Big Picture - Future Plans
+ 
+- Port MATLAB functions to Python to remove the MATLAB Engine dependency.
+- Add further measures of emergence/complexity, more time-series models, and richer visualizations.
+- Make the project contributor-ready (guidelines, code of conduct, CI, tests).
+- Add comprehensive documentation and examples.
 
 # Documentation
 
-*Installation
-
 # Citing
+
+If you use ComplexPy in academic work, please cite both the software and the underlying methods you employ.
+
+## Cite the software
+Until a first tagged release is available, please cite the repository with the commit you used (or the access date).
+
+Plain text (replace placeholders):
+```
+Spychala, N. (2025). ComplexPy. GitHub repository.
+Commit: <commit-sha>, retrieved <YYYY-MM-DD>.
+https://github.com/nadinespy/ComplexPy
+```
+
+BibTeX (replace placeholders):
+```bibtex
+@software{Spychala_ComplexPy,
+  author  = {Spychala, Nadine},
+  title   = {ComplexPy},
+  year    = {2025},
+  note    = {GitHub repository, commit: <commit-sha>, retrieved <YYYY-MM-DD>},
+  url     = {https://github.com/nadinespy/ComplexPy}
+}
+```
+
+## Cite the methods
+Also cite the specific measures you use. Suggested references:
+
+- If you use Integrated Information Decomposition: [Towards an extended taxonomy of information dynamics](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1008289).
+
+- If you use Whole-Parts Emergence: [Reconciling Emergences: An information-theoretic approach to identify causal emergence in multivariate data](https://arxiv.org/abs/2004.08220).
+
+- If you use Common Change in Surprisal (CCS) as a redundancy measure for Integrated Information Decomposition: [Measuring multivariate redundant information with pointwise common change in surprisal (CCS)](https://www.mdpi.com/1099-4300/19/7/318).
 
 # Contribute
 
-Once I have succeeded in releasing a mini-version of the library, I welcome contributions especially from people with software engineering/coding skills, and/or knowledge in information theory & complex systems, and/or a general interest in mathematical/formal micro-macro relationships, and/or a combination of the things just mentioned. Generally, contributions from anyone at any career stage and with any amount of coding experience will be welcome. Both contribution guidelines and Contributor Code of Conduct will be provided once a first release is achieved. 
+Contributions are very welcome from anyone - whether your background is software engineering, information theory, complex systems, or you’re simply interested in formal micro–macro relationships. A detailed Contributor Guide and a Contributor Code of Conduct will be added soon.
+
+In the meantime:
+- Open an issue to discuss ideas or report bugs.
+- Submit a pull request for small, self-contained improvements.
+- For larger contributions or questions, feel free to reach out via email: nadine.spychala@gmail.com.
 
 ### Licensing
 
 This code uses the MIT license. More info can be found in the `LICENSE` file. 
 
-### Getting cited
-
-It has long been private due to unsettled publications statuses of software used, and has been made public only very recently. For that reason, preparations to make it ready for contributions from others lay dormant. I aim to change this soon, and all necessary info (e. g., contributor's guide) will be included, and further work on the code base that is necessary to have a minimally working library will follow.
