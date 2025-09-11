@@ -1,4 +1,10 @@
 ## complexpy
+[![Status: WIP](https://img.shields.io/badge/status-WIP-orange.svg)](#)
+[![Stage: Alpha](https://img.shields.io/badge/stage-alpha-red.svg)](#)
+[![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](#contribute)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.10|3.11](https://img.shields.io/badge/python-3.10%20|%203.11-blue.svg)](#)
+[![Poetry](https://img.shields.io/badge/packaging-poetry-60A5FA.svg)](#)
 
 # ComplexPy - a Python Library for Measures of Emergence & Complexity
 This is the repository for a Python library whose aim is to apply several measures of emergence & complexity to either empirical or simulated time-series data, and provide guidance for comparisons among and conclusions about different measures. It thereby aims to enhance reproducibility, accessibility, systematicity, inclusivity, as well as drive the iterative cycle of theory and application in relevant fields of research.
