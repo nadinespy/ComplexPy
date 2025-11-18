@@ -1,6 +1,6 @@
 ## complexpy
 [![Status: WIP](https://img.shields.io/badge/status-WIP-orange.svg)](#)
-[![Stage: Alpha](https://img.shields.io/badge/stage-alpha-red.svg)](#)
+[![Stage: Research prototype](https://img.shields.io/badge/stage-research%20prototype-purple.svg)](#)
 [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](#contribute)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10|3.11](https://img.shields.io/badge/python-3.10%20|%203.11-blue.svg)](#)
@@ -101,14 +101,25 @@ pip install .
 - MATLAB Engine is currently required for this package. Importing `complexpy` starts the MATLAB Engine, and core functions (`phiid_wpe`, `phiid_2sources_2targets`, `shannon_wpe`) call MATLAB/Octave code under `src/phiid` and `src/shannon_wpe`.
 - Setup tips: ensure a local MATLAB installation and the MATLAB Engine for Python are installed (see MathWorks docs), then run `poetry install`.
 
-## The Big Picture - Future Plans
- 
-- Port MATLAB functions to Python to remove the MATLAB Engine dependency.
-- Add further measures of emergence/complexity, more time-series models, and richer visssh -T git@github.com || trueualizations.
-- Make the project contributor-ready (guidelines, code of conduct, CI, tests).
-- Add comprehensive documentation and examples.
-
 ## Documentation
+
+- **[Getting Started Guide](doc/getting-started.md)** - Your first emergence analysis walkthrough
+- **[Architecture](doc/architecture.md)** - Technical implementation details and design
+- **[Theory](doc/theory.md)** - Understanding emergence, complexity, and information theory
+- **[How-To Guides](doc/how-to/)** - Task-specific recipes and templates (coming soon)
+- **[Contributing](CONTRIBUTING.md)** - How to contribute to ComplexPy
+
+## Roadmap
+
+ComplexPy aims to become the go-to toolkit for emergence and complexity research. Key goals:
+
+- **Pure Python**: Remove MATLAB dependency for wider accessibility
+- **More Measures**: Add Dynamical Independence, G-emergence, complexity measures
+- **More Models**: Support 8-node networks, Kuramoto oscillators, empirical data loaders
+- **Better Tooling**: Comprehensive tests, CI/CD, automated workflows
+- **Rich Documentation**: Tutorials, examples, API reference
+
+See [doc/architecture.md - Future Plans](doc/architecture.md#future-plans) for detailed technical roadmap and implementation plans.
 
 ## Citing
 
@@ -144,14 +155,22 @@ Also cite the specific measures you use. Suggested references:
 
 - If you use Common Change in Surprisal (CCS) as a redundancy measure for Integrated Information Decomposition: [Measuring multivariate redundant information with pointwise common change in surprisal (CCS)](https://www.mdpi.com/1099-4300/19/7/318).
 
-## Contribute
+## Contributing
 
-Contributions are very welcome from anyone - whether your background is software engineering, information theory, complex systems, or you’re simply interested in formal micro–macro relationships. A detailed Contributor Guide and a Contributor Code of Conduct will be added soon.
+Contributions are very welcome from anyone - whether your background is software engineering, information theory, complex systems, or you're simply interested in formal micro-macro relationships.
 
-In the meantime:
-- Open an issue to discuss ideas or report bugs.
-- Submit a pull request for small, self-contained improvements.
-- For larger contributions or questions, feel free to reach out via email: nadine.spychala@gmail.com.
+**Get started:**
+- Read the [Contributing Guide](CONTRIBUTING.md) for setup and guidelines
+- Check the [How-To templates](doc/how-to/README.md) for contribution ideas
+- Open an issue to discuss ideas or report bugs
+- Email nadine.spychala@gmail.com for questions
+
+**Priority areas:**
+- Port MATLAB code to Python
+- Add tests and improve documentation
+- Implement new models or measures
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## Licensing
 
