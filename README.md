@@ -47,62 +47,40 @@ cp.shannon_wpe()
 
 ## Installation
 
-### Requirements
-- Python >=3.9,<3.12 (3.10 or 3.11 recommended)
-- MATLAB (for MATLAB Engine for Python).
+**Requirements:** Python 3.10-3.11 • MATLAB R2023b+ • Poetry
 
-### Install with Poetry (recommended)
+**Important:** The `matlabengine` version must match your MATLAB version.
+
+| Your MATLAB | Edit pyproject.toml to |
+|-------------|------------------------|
+| R2023b | `matlabengine = "~23.2.0"` (default) |
+| R2024a | `matlabengine = "~24.1.0"` |
+| R2025a | `matlabengine = "~25.1.0"` |
+| R2025b | `matlabengine = "~25.2.0"` |
+
+**Quick install:**
+
 ```bash
-# from the repository root
-poetry env use python3.10    # or python3.11
+# 1. Check your MATLAB version & update pyproject.toml if needed
+matlab -batch "disp(matlabroot)"  # e.g., /usr/local/MATLAB/R2025a
 
-# install runtime dependencies
+# 2. Set MATLAB library path in ~/.bashrc (adjust R2025a to your version):
+export LD_LIBRARY_PATH=/usr/local/MATLAB/R2025a/bin/glnxa64:$LD_LIBRARY_PATH
+source ~/.bashrc
+
+# 3. Install
+poetry env use python3.11
 poetry install
 
-# optionally include dev tools (e.g., Jupyter)
-poetry install --with dev
+# 4. Verify
+poetry run python -c "import complexpy; print('Success!')"
 ```
 
-Activate the virtual environment (optional; you can also prefix commands with `poetry run`):
-```bash
-poetry shell
-```
-
-### Verify the installation
-```bash
-# run tests
-poetry run pytest -q
-
-# show package version
-poetry run python -c "import complexpy; print(complexpy.__version__)"
-```
-
-### Run example analysis
-```bash
-poetry run python scripts/complexpy_analysis.py
-# or, if you activated the shell:
-# python scripts/complexpy_analysis.py
-```
-
-### Using Jupyter (if installed with --with dev)
-```bash
-poetry run jupyter lab
-```
-
-### Installing without Poetry (not preferred)
-```bash
-python3.10 -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install .
-```
-
-### Notes on MATLAB Engine
-- MATLAB Engine is currently required for this package. Importing `complexpy` starts the MATLAB Engine, and core functions (`phiid_wpe`, `phiid_2sources_2targets`, `shannon_wpe`) call MATLAB/Octave code under `src/phiid` and `src/shannon_wpe`.
-- Setup tips: ensure a local MATLAB installation and the MATLAB Engine for Python are installed (see MathWorks docs), then run `poetry install`.
+**Need help?** See the **[Installation Guide](doc/installation.md)** for detailed instructions and troubleshooting.
 
 ## Documentation
 
+- **[Installation Guide](doc/installation.md)** - Comprehensive installation instructions and troubleshooting
 - **[Getting Started Guide](doc/getting-started.md)** - Your first emergence analysis walkthrough
 - **[Architecture](doc/architecture.md)** - Technical implementation details and design
 - **[Theory](doc/theory.md)** - Understanding emergence, complexity, and information theory
