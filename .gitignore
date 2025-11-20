@@ -7,6 +7,7 @@
 
 # Output files
 *.png
+!doc/images/*.png
 *.pkl
 
 # Python runtime
@@ -19,6 +20,7 @@
 venv/
 
 # Other folder and files
+results/
 examples/
 _build/
 auto_examples/
@@ -28,3 +30,4 @@ gen_api/
 *.DS_Store
 *.zip
 *.odt
+echo "src/complexpy/plotting.py" >> .gitignore
