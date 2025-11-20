@@ -15,6 +15,13 @@ import matlab.engine
 # define Matlab engine
 eng = matlab.engine.start_matlab()
 
+# Calculate absolute paths to MATLAB code directories
+_module_dir = os.path.dirname(os.path.abspath(__file__))
+_project_root = os.path.dirname(os.path.dirname(_module_dir))
+_phiid_path = os.path.join(_project_root, 'src', 'phiid')
+_shannon_wpe_path = os.path.join(_project_root, 'src', 'shannon_wpe')
+_infodynamics_jar_path = os.path.join(_phiid_path, 'infodynamics.jar')
+
 # -----------------------------------------------------------------------------
 # CAUSAL EMERGENCE (PHIID & PRACTICAL)
 # -----------------------------------------------------------------------------
@@ -56,7 +63,7 @@ def phiid_wpe(data_dict, time_lag_for_measure=1, red_func='mmi'):
         raise ValueError('micro has less than 2 rows and less than 2 columns')
     
     if np.isnan(micro).any() != True:
-        phiid_dict = phiid_2sources_2targets(micro, time_lag_for_measure = 1, red_func = 'mmi')
+        phiid_dict = phiid_2sources_2targets(micro, time_lag_for_measure=time_lag_for_measure, red_func=red_func)
         
         if not isinstance(phiid_dict, dict):
             raise ValueError('phiid_dict is not a dict') 
@@ -139,9 +146,9 @@ def shannon_wpe(data_dict, time_lag_for_measure=1):
     #file_path = os.path.abspath(os.path.dirname(__file__))
     #oc.addpath(file_path + '/practical_measures_causal_emergence')  
 
-    #eng.eval('pkg load statistics') 
-    eng.addpath('src/shannon_wpe')
-        
+    #eng.eval('pkg load statistics')
+    eng.addpath(_shannon_wpe_path)
+
     shannon_wpe = eng.EmergencePsi(micro, macro, time_lag_for_measure, 'Gaussian')
     shannon_dc = eng.EmergenceDelta(micro, macro, time_lag_for_measure, 'Gaussian') 
     shannon_cd = eng.EmergenceGamma(micro, macro, time_lag_for_measure, 'Gaussian')
@@ -182,11 +189,11 @@ def phiid_2sources_2targets(micro, time_lag_for_measure=1, red_func='mmi'):
         
         #file_path = os.path.abspath(os.path.dirname(__file__))
         #eng.chdir(file_path+'/phiid') 
-        #eng.javaaddpath(file_path + '/phiid/infodynamics.jar') 
-        #eng.eval('pkg load statistics') 
+        #eng.javaaddpath(file_path + '/phiid/infodynamics.jar')
+        #eng.eval('pkg load statistics')
 
-        eng.addpath('src/phiid')
-        eng.javaaddpath('src/phiid/infodynamics.jar', '-end', nargout=0)
+        eng.addpath(_phiid_path)
+        eng.javaaddpath(_infodynamics_jar_path, '-end', nargout=0)
         
         micro = matlab.double(micro.tolist())
         time_lag_for_measure = matlab.double(time_lag_for_measure)

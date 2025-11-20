@@ -7,12 +7,17 @@ Created on Mon Dec 27 17:44:25 2021
 """
 
 import numpy as np
-import os 
+import os
 
 import matlab.engine
 
 # define Matlab engine
 eng = matlab.engine.start_matlab()
+
+# Calculate absolute paths to MATLAB code directories
+_module_dir = os.path.dirname(os.path.abspath(__file__))
+_project_root = os.path.dirname(os.path.dirname(_module_dir))
+_phiid_path = os.path.join(_project_root, 'src', 'phiid')
 
 # -----------------------------------------------------------------------------
 # FUNCTIONS FOR DATA GENERATION
@@ -59,10 +64,10 @@ def mvar_sim_data(coupling_matrix, npoints = None, time_lag_for_model = None, no
         #oc.addpath(file_path)    
         #oc.eval('pkg load statistics') 
         
-        #eng.eval('pkg load statistics') 
+        #eng.eval('pkg load statistics')
         #eng.chdir('/src')
         #os.chdir('src/phiid')
-        eng.addpath('src/phiid')
+        eng.addpath(_phiid_path)
 
         coupling_matrix = matlab.double(coupling_matrix.tolist())
         npoints = matlab.double(npoints)

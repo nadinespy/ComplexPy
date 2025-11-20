@@ -16,9 +16,9 @@ We'll analyze a simple 2-node network to answer: **How does coupling strength af
 
 Specifically:
 1. Generate time-series data from a 2-node MVAR model
-2. Compute Shannon-based Whole-Parts Emergence
-3. Visualize how emergence varies with coupling strength
-4. Interpret what the results mean
+2. Compute emergence measures (Shannon or PhiID)
+3. Interpret what the results mean
+4. Visualize with heatmaps
 
 ---
 
@@ -206,38 +206,14 @@ Output (example):
 
 ---
 
-## Step 8: Visualize the Results
+## Step 8: Understand the Results
 
-Let's see how emergence changes with coupling:
-
-```python
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# Filter for one noise_corr value
-df_uncorr = emergence_df[emergence_df['noise_corr'] == 0.0]
-
-# Plot
-plt.figure(figsize=(10, 6))
-plt.plot(df_uncorr['coupling'], df_uncorr['shannon_wpe'],
-         marker='o', label='WPE (Ψ)')
-plt.plot(df_uncorr['coupling'], df_uncorr['shannon_dc'],
-         marker='s', label='DC (Δ)')
-plt.plot(df_uncorr['coupling'], df_uncorr['shannon_cd'],
-         marker='^', label='CD (Γ)')
-
-plt.xlabel('Coupling Strength', fontsize=12)
-plt.ylabel('Emergence (bits)', fontsize=12)
-plt.title('Emergence vs Coupling Strength (uncorrelated noise)', fontsize=14)
-plt.legend()
-plt.grid(True, alpha=0.3)
-plt.show()
-```
-
-**Expected pattern**:
+**Expected patterns** in your data:
 - Emergence increases with coupling strength
 - At low coupling: nodes are nearly independent → low emergence
 - At high coupling: nodes interact strongly → high emergence
+
+See Step 12 for visualization examples.
 
 ---
 
@@ -299,53 +275,74 @@ Similar ranges for DC and CD.
 
 ---
 
-## Step 10: Compare Noise Conditions
-
-Let's see how noise correlation affects emergence:
-
-```python
-# Create comparison plot
-fig, axes = plt.subplots(1, 2, figsize=(14, 5))
-
-for idx, noise_val in enumerate([0.0, 0.5]):
-    df_subset = emergence_df[emergence_df['noise_corr'] == noise_val]
-
-    axes[idx].plot(df_subset['coupling'], df_subset['shannon_wpe'],
-                   marker='o', label='WPE')
-    axes[idx].set_xlabel('Coupling Strength')
-    axes[idx].set_ylabel('Emergence (bits)')
-    axes[idx].set_title(f'Noise Correlation = {noise_val}')
-    axes[idx].legend()
-    axes[idx].grid(True, alpha=0.3)
-
-plt.tight_layout()
-plt.show()
-```
-
-**Expected pattern**:
-- **Uncorrelated noise** (0.0): Higher emergence
-  - Independent noise → more complex dynamics
-- **Correlated noise** (0.5): Lower emergence
-  - Common noise source → less true interaction
-
-**Why?** Correlated noise creates "fake" synchrony (common cause) rather than true emergent coordination.
-
----
-
-## Step 11: Save Your Results
+## Step 10: Save Your Results
 
 Save the DataFrame for later analysis:
 
 ```python
-emergence_df.to_csv('my_first_emergence_analysis.csv', index=False)
+import os
+
+# Create output directories
+os.makedirs('results/analyses', exist_ok=True)
+os.makedirs('results/plots', exist_ok=True)
+
+# Save as pickle (preserves data types)
+emergence_df.to_pickle('results/analyses/emergence_results.pkl')
+
+# Or as CSV
+emergence_df.to_csv('results/analyses/emergence_results.csv', index=False)
 ```
 
 You can reload it anytime:
 
 ```python
 import pandas as pd
-emergence_df = pd.read_csv('my_first_emergence_analysis.csv')
+
+# Load from pickle
+emergence_df = pd.read_pickle('results/analyses/emergence_results.pkl')
+
+# Or from CSV
+emergence_df = pd.read_csv('results/analyses/emergence_results.csv')
 ```
+
+---
+
+## Step 11: Visualize with Heatmaps
+
+For parameter sweeps, heatmaps show how emergence varies across coupling (y-axis) and noise correlation (x-axis).
+
+**Generate all plots automatically:**
+```bash
+poetry run python scripts/plot_emergence_heatmaps.py
+```
+
+**For custom plotting**, see `scripts/plotting_demo.ipynb`.
+
+### Example Plots
+
+#### Single Measure
+
+![phiid_wpe heatmap](images/example_heatmap_phiid_wpe.png)
+
+*Whole-parts emergence increases with coupling strength.*
+
+#### All Three Measures
+
+![All measures comparison](images/example_all_measures.png)
+
+*WPE, DC, and CD show different patterns across parameters.*
+
+#### Comparing Redundancy Functions
+
+![MMI vs CCS comparison](images/example_redfunc_comparison.png)
+
+*MMI and CCS can yield different emergence patterns.*
+
+#### Comparing Time Lags
+
+![Time lag comparison](images/example_timelag_comparison.png)
+
+*The measurement time scale affects results.*
 
 ---
 
@@ -447,41 +444,6 @@ result = cp.shannon_wpe(data_dict, time_lag_for_measure=1)
 print(f"WPE: {result['shannon_wpe']:.3f} bits")
 print(f"DC:  {result['shannon_dc']:.3f} bits")
 print(f"CD:  {result['shannon_cd']:.3f} bits")
-```
-
-### Visualize Time-Series
-
-Understand what the data looks like:
-
-```python
-# Generate data
-data_dict = ds.generate_2node_mvar_data(
-    coupling=0.3, noise_corr=0.0, time_lag_for_model=1,
-    npoints=500, macro_func_mvar=ds.sum_micro_mvar,
-    micro_func_mvar=ds.raw_micro_mvar
-)
-
-# Plot
-time = np.arange(500)
-plt.figure(figsize=(12, 6))
-
-plt.subplot(2, 1, 1)
-plt.plot(time, data_dict['micro'][0, :], label='Node 1', alpha=0.7)
-plt.plot(time, data_dict['micro'][1, :], label='Node 2', alpha=0.7)
-plt.ylabel('Activity')
-plt.legend()
-plt.title('Micro Level: Individual Nodes')
-plt.grid(True, alpha=0.3)
-
-plt.subplot(2, 1, 2)
-plt.plot(time, data_dict['macro'][0, :], color='purple')
-plt.xlabel('Time')
-plt.ylabel('Activity')
-plt.title('Macro Level: Population Activity (sum)')
-plt.grid(True, alpha=0.3)
-
-plt.tight_layout()
-plt.show()
 ```
 
 ---
